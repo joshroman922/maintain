@@ -1,1 +1,535 @@
-PLACEHOLDER
+<!DOCTYPE html>
+<html lang="en" style="background:#03070c">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Maintain">
+<meta name="theme-color" content="#03070c">
+<title>Maintain</title>
+<style>
+  :root{
+    --void:#03070c; --panel:rgba(10,20,30,.72); --line:rgba(90,210,230,.22);
+    --cyan:#5ad6e6; --cyan-hot:#bff4ff; --cyan-dim:#2a7d8c;
+    --amber:#f0a63c; --ink:#dcecf3; --dim:#7794a6; --danger:#e8654f;
+    --mono:ui-monospace,"SF Mono",Menlo,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  html{background:var(--void)}
+  body{font-family:var(--sans);color:var(--ink);background:var(--void);-webkit-user-select:none;user-select:none}
+  .stage{position:relative;min-height:100vh;min-height:100dvh;overflow:hidden}
+  body::before{content:"";position:fixed;inset:0;z-index:0;
+    background:
+      radial-gradient(60% 45% at 50% 40%,rgba(90,214,230,.16),transparent 60%),
+      radial-gradient(80% 60% at 50% 120%,rgba(90,214,230,.06),transparent 60%),
+      radial-gradient(rgba(90,214,230,.05) 1px,transparent 1px);
+    background-size:auto,auto,26px 26px}
+
+  .crumb{position:fixed;top:calc(env(safe-area-inset-top) + 16px);left:14px;right:14px;z-index:15;
+    font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--dim);text-transform:uppercase;
+    pointer-events:none;text-align:center;line-height:1.5}
+  .crumb b{color:var(--cyan)}
+
+  #orbit{position:absolute;left:50%;top:42%;z-index:8;width:0;height:0}
+
+  .ring{position:absolute;left:0;top:0;border-radius:50%;transform:translate(-50%,-50%);pointer-events:none}
+  .ring.r1{width:300px;height:300px;border:1px solid rgba(90,214,230,.28)}
+  .ring.r2{width:250px;height:250px;border:1px dashed rgba(90,214,230,.20);animation:spin 44s linear infinite}
+  .ring.r3{width:196px;height:196px;border:1px solid rgba(90,214,230,.16)}
+  .ring.ticks{width:326px;height:326px;
+    background:repeating-conic-gradient(from 0deg,rgba(90,214,230,.28) 0deg .5deg,transparent .5deg 9deg);
+    -webkit-mask:radial-gradient(circle,transparent 0 156px,#000 156px 163px,transparent 163px);
+    mask:radial-gradient(circle,transparent 0 156px,#000 156px 163px,transparent 163px);
+    animation:spin 90s linear infinite reverse}
+  .sweep{position:absolute;left:0;top:0;width:300px;height:300px;border-radius:50%;transform:translate(-50%,-50%);
+    background:conic-gradient(from 0deg,rgba(90,214,230,.20),transparent 55deg);pointer-events:none;
+    -webkit-mask:radial-gradient(circle,transparent 0 40px,#000 40px);mask:radial-gradient(circle,transparent 0 40px,#000 40px);
+    animation:spin 6s linear infinite}
+  @keyframes spin{to{transform:translate(-50%,-50%) rotate(360deg)}}
+
+  .tri{position:absolute;left:0;top:0;width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;
+    border-bottom:9px solid rgba(90,214,230,.5);pointer-events:none}
+  .base{position:absolute;left:0;top:96px;width:280px;height:70px;transform:translateX(-50%);
+    background:radial-gradient(closest-side,rgba(90,214,230,.28),transparent 72%);border-radius:50%;filter:blur(2px);pointer-events:none}
+
+  .orb{position:absolute;left:0;top:0;transform:translate(-50%,-50%);width:172px;height:172px;cursor:pointer;z-index:9}
+  .orb .glow{position:absolute;inset:-28px;border-radius:50%;
+    background:radial-gradient(circle,rgba(90,214,230,.45),transparent 66%);animation:breathe 4.4s ease-in-out infinite}
+  @keyframes breathe{0%,100%{opacity:.7;transform:scale(.98)}50%{opacity:1;transform:scale(1.03)}}
+  .orb svg{position:relative;display:block;width:172px;height:172px;filter:drop-shadow(0 0 18px rgba(90,214,230,.55))}
+  .orb .lbl{position:absolute;left:50%;bottom:-2px;transform:translateX(-50%);white-space:nowrap;
+    font-family:var(--mono);font-size:9px;letter-spacing:.22em;color:var(--cyan);text-shadow:0 0 8px rgba(90,214,230,.6)}
+  .orb:active{transform:translate(-50%,-50%) scale(.96)}
+  .core{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:12;width:36px;height:36px;border-radius:50%;
+    background:radial-gradient(circle at 50% 38%,#dffaff,#3fb4cc 58%,#0a2c3c);
+    border:1px solid rgba(190,244,255,.9);box-shadow:0 0 16px rgba(90,214,230,.85),inset 0 1px 2px rgba(255,255,255,.6);
+    display:grid;place-items:center;cursor:pointer;font:italic 700 17px/1 Georgia,"Times New Roman",serif;color:#04121a}
+  .core:active{transform:translate(-50%,-50%) scale(.88)}
+
+  .node{position:absolute;left:0;top:0;width:66px;height:66px;margin:-33px 0 0 -33px;z-index:10;
+    border-radius:50%;border:1px solid var(--line);
+    background:radial-gradient(circle at 50% 35%,rgba(20,40,52,.9),rgba(6,14,20,.92));
+    backdrop-filter:blur(10px);box-shadow:0 4px 18px rgba(0,0,0,.5),inset 0 1px 0 rgba(150,240,255,.18),0 0 14px rgba(90,214,230,.15);
+    display:flex;align-items:center;justify-content:center;cursor:pointer;
+    opacity:0;transform:translate(0,0) scale(.15);
+    transition:transform .5s cubic-bezier(.34,1.5,.5,1),opacity .3s,border-color .15s,box-shadow .2s}
+  .layer{position:absolute;left:0;top:0;width:0;height:0;
+    transition:transform .4s cubic-bezier(.34,1.15,.5,1),opacity .4s,filter .4s}
+  .layer.on .node{opacity:1;transform:translate(var(--x),var(--y)) scale(1)}
+  .layer.settled .node{opacity:1;transform:translate(var(--x),var(--y)) scale(1);transition:none}
+  .hub{position:absolute;left:0;top:0;z-index:11;width:86px;height:86px;margin:-43px 0 0 -43px;
+    border-radius:50%;border:1px solid var(--cyan);cursor:pointer;
+    background:radial-gradient(circle at 50% 34%,rgba(44,86,102,.97),rgba(8,20,28,.97));
+    box-shadow:0 0 26px rgba(90,214,230,.55),inset 0 1px 0 rgba(150,240,255,.3);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    opacity:0;transform:translate(var(--hx),var(--hy)) scale(.4);
+    transition:transform .42s cubic-bezier(.34,1.3,.5,1),opacity .3s}
+  .layer.on .hub{opacity:1;transform:translate(var(--hx),var(--hy)) scale(1)}
+  .layer.settled .hub{opacity:1;transform:translate(var(--hx),var(--hy)) scale(1);transition:none}
+  .hub .hi{font-size:30px;line-height:1;filter:drop-shadow(0 1px 3px rgba(0,0,0,.55))}
+  .hub .hc{font:600 10px/1.15 var(--sans);color:var(--ink);margin-top:3px;max-width:76px;text-align:center;
+    text-shadow:0 1px 4px rgba(0,0,0,.85)}
+  .node.sub{width:56px;height:56px;margin:-28px 0 0 -28px}
+  .node.sub .ni{font-size:21px}
+  .node:active{border-color:var(--cyan);box-shadow:0 0 18px rgba(90,214,230,.5),inset 0 1px 0 rgba(150,240,255,.25)}
+  .node .ni{font-size:24px;line-height:1;filter:drop-shadow(0 1px 3px rgba(0,0,0,.55))}
+  .node .ct{position:absolute;top:-4px;right:-4px;min-width:17px;height:17px;padding:0 4px;border-radius:9px;
+    background:var(--amber);color:#1c1305;font:700 10px/17px var(--mono);text-align:center;box-shadow:0 0 8px rgba(240,166,60,.5)}
+  .node .lk{position:absolute;top:-3px;right:-3px;width:16px;height:16px;border-radius:50%;background:var(--cyan);color:#04121a;font:700 10px/16px var(--sans);text-align:center}
+  .node .cap{position:absolute;top:calc(100% + 5px);left:50%;transform:translateX(-50%);width:94px;text-align:center;
+    font:600 10px/1.2 var(--sans);letter-spacing:.02em;color:var(--ink);text-shadow:0 1px 4px rgba(0,0,0,.85);pointer-events:none}
+  .node.folder::after{content:"";position:absolute;bottom:6px;left:50%;transform:translateX(-50%);
+    width:3px;height:3px;border-radius:50%;background:var(--cyan);box-shadow:0 0 5px var(--cyan)}
+  .node.addch{border-style:dashed}
+  .node.addch .ni{color:var(--dim);font-size:22px}
+  .node.addch .cap{color:var(--dim)}
+
+  .hint{position:fixed;left:0;right:0;bottom:calc(env(safe-area-inset-bottom) + 26px);text-align:center;z-index:6;
+    font-family:var(--mono);font-size:11px;letter-spacing:.16em;color:var(--dim);text-transform:uppercase;
+    transition:opacity .3s;pointer-events:none}
+  .flash{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 74px);transform:translate(-50%,8px);z-index:25;
+    max-width:82vw;background:rgba(10,22,32,.95);border:1px solid var(--line);border-radius:12px;padding:11px 15px;
+    font-size:13px;color:var(--ink);opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;text-align:center}
+  .flash.on{opacity:1;transform:translate(-50%,0)}
+
+  .veil{position:fixed;inset:0;z-index:30;background:rgba(2,5,9,.6);backdrop-filter:blur(4px);
+    display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
+  .veil.on{opacity:1;pointer-events:auto}
+  .sheet{width:100%;max-width:620px;max-height:82vh;display:flex;flex-direction:column;
+    background:linear-gradient(180deg,rgba(12,24,34,.96),rgba(6,13,20,.98));
+    border:1px solid var(--line);border-bottom:none;border-radius:20px 20px 0 0;
+    box-shadow:0 -8px 40px rgba(0,0,0,.6),0 0 0 1px rgba(90,214,230,.08);
+    padding:16px 16px calc(env(safe-area-inset-bottom) + 16px);transform:translateY(24px);transition:transform .2s}
+  .veil.on .sheet{transform:translateY(0)}
+  .grip{width:40px;height:4px;border-radius:2px;background:var(--line);margin:2px auto 12px;flex:none}
+  .shead{display:flex;align-items:center;gap:11px;margin-bottom:12px;flex:none}
+  .back{width:38px;height:38px;flex:none;border:1px solid var(--line);background:var(--panel);color:var(--ink);
+    border-radius:10px;font-size:19px;cursor:pointer;display:grid;place-items:center}
+  .back:active{background:rgba(90,214,230,.12)}
+  .shead .tt{flex:1;min-width:0}
+  .shead .cid{font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--cyan)}
+  .shead .nm{font-size:19px;font-weight:700;margin-top:1px;letter-spacing:.01em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .kill{border:1px solid var(--line);background:var(--panel);color:var(--dim);border-radius:9px;padding:8px 10px;
+    font-family:var(--mono);font-size:10px;letter-spacing:.08em;cursor:pointer;flex:none}
+  .kill:active{color:var(--cyan);border-color:var(--cyan)}
+
+  .seg{display:flex;gap:8px;margin-bottom:13px}
+  .seg button{flex:1;border:1px solid var(--line);background:transparent;color:var(--dim);border-radius:9px;
+    padding:11px;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;cursor:pointer}
+  .seg button.on{background:rgba(90,214,230,.14);color:var(--cyan);border-color:var(--cyan)}
+  .mform.folder .linkonly{display:none}
+
+  .fld{margin-bottom:11px}
+  .fld label{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--dim);text-transform:uppercase;margin-bottom:6px}
+  .fld input,.fld textarea{width:100%;background:var(--void);border:1px solid var(--line);border-radius:9px;
+    color:var(--ink);font-family:var(--sans);font-size:16px;padding:11px 12px;resize:vertical}
+  .fld .rowin{display:flex;gap:9px}.fld .rowin .ic{width:64px;text-align:center}
+  .fld input:focus,.fld textarea:focus{outline:none;border-color:var(--cyan);box-shadow:0 0 0 2px rgba(90,214,230,.18)}
+  .fld textarea{min-height:60px}
+  .acts{display:flex;gap:10px}
+  .btn{flex:1;border-radius:10px;padding:13px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;cursor:pointer;border:1px solid var(--line)}
+  .btn.ghost{background:transparent;color:var(--dim)}.btn.ghost:active{color:var(--ink)}
+  .btn.go{background:var(--cyan);color:#04121a;border-color:var(--cyan);font-weight:700}.btn.go:active{opacity:.85}
+  .btn.danger{background:transparent;color:var(--danger);border-color:var(--danger)}
+  .btn.full{width:100%;flex:none;margin-top:8px}
+
+  .doc{overflow-y:auto;font-size:13.5px;line-height:1.6;color:var(--ink)}
+  .doc .sec{margin-bottom:15px}
+  .doc .sh{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--cyan);margin-bottom:5px}
+  .doc .sb{white-space:pre-wrap;color:var(--ink)}
+  .doc .sb.empty{color:var(--dim);opacity:.6}
+  .list{overflow-y:auto;-webkit-overflow-scrolling:touch;flex:1}
+  .ver{font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--dim);opacity:.55;text-align:center;margin-top:10px}
+
+  @media (prefers-reduced-motion:reduce){*{animation:none!important}.node{transition:opacity .2s}}
+</style>
+</head>
+<body style="background:#03070c;color:#dcecf3">
+
+<div class="stage" id="stage" style="min-height:100vh">
+  <div class="crumb" id="crumb"><b>HUB</b></div>
+  <div id="orbit"></div>
+  <div class="hint" id="hint"></div>
+</div>
+
+<div class="flash" id="flash"></div>
+<div class="veil" id="veil"><div class="sheet" id="sheet"></div></div>
+
+<script>
+"use strict";
+
+function esc(s){ return String(s==null?"":s)
+  .replace(/&/g,"&").replace(/</g,"<").replace(/>/g,">")
+  .replace(/"/g,""").replace(/'/g,"&#39;"); }
+function safeUrl(u){
+  u=(u||"").trim(); if(!u) return "";
+  if(/^\s*(javascript|data|vbscript|blob|file):/i.test(u)) return "";
+  if(/^[a-z][a-z0-9.+-]*:/i.test(u)) return u;
+  if(/^\/\//.test(u)) return "https:"+u;
+  if(/\./.test(u)) return "https://"+u;
+  return "";
+}
+function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,6); }
+function iconOr(n){ return (n&&n.icon) ? n.icon : "\u2726"; }
+function openUrl(url){ var a=document.createElement("a"); a.href=url; a.target="_blank"; a.rel="noopener"; document.body.appendChild(a); a.click(); a.remove(); }
+
+/* ---------- storage ---------- */
+var Store=(function(){
+  var KEY="maintain:v1", mem=null;
+  function folder(name,icon){ return {id:uid(),kind:"folder",name:name,icon:icon,children:[]}; }
+  function defaultTop(){ return [
+    folder("Social","\uD83D\uDCAC"), folder("Health","\uD83E\uDE7A"),
+    folder("Routine / Protocol","\uD83D\uDD01"), folder("Work","\uD83D\uDEE0\uFE0F"),
+    folder("Files","\uD83D\uDDC2\uFE0F"), folder("Study / Journal","\uD83D\uDCD3")
+  ];}
+  function defaultSystem(){ return {
+    how:"Your top categories always circle the core \u2014 nothing to open first. Tap any category to descend into its sub-categories, which then circle the core the same way, rings within rings. Tap the orb (or empty space) to back out one level. The centre \u201Ci\u201D core is always the System panel.",
+    subagents:"Planned: each node can hand off to a Gemini sub-agent (via the proxy). Not built yet \u2014 first deploy, then stand up the proxy, then wire agents per node.",
+    buttons:"Orb body \u2014 tap to back out one level (top categories stay visible).\nCentre \u201Ci\u201D core \u2014 this System panel.\nDashed + node \u2014 add a folder or a link/note at the current level.\nLong-press a node \u2014 edit or delete it.",
+    goal:"Maintain is a personal life-OS console \u2014 one home screen for every part of my life, hosted on GitHub Pages and pinned to my iPhone home screen. The long game: each node can hand off to a Gemini sub-agent, and iOS Shortcuts can trigger actions. This file is the single source of truth until storage moves to Notion behind a proxy.",
+    handoff:"PROJECT: Maintain \u2014 single-file HTML life-OS console for iPhone.\n\nAESTHETIC: JARVIS-style orbital HUD. Cyan structure, amber counts, dark void background. Central hex-sphere orb with concentric rings, ticks, radar sweep, reflective base.\n\nNAVIGATION (v7): Top categories ALWAYS circle the core \u2014 no open/closed state. Tap a category to descend into its sub-categories, which circle the core the same way (rings within rings). Tap the orb or empty space to back out one level; you always land on a populated ring, never a bare sphere. Breadcrumb shows HUB > Category > \u2026\n\nCENTRE CORE: the glowing \u201Ci\u201D dot dead-centre opens this System panel at every level. It is the home for subagents, files, handoff and rules \u2014 the growing control centre.\n\nCATEGORIES (6 seeded): Social, Health, Routine / Protocol, Work, Files, Study / Journal.\n\nSTORAGE: single Store abstraction (localStorage now, in-memory fallback). Designed as a drop-in swap to Notion via a key-holding proxy later. Data model schema versioned; migrations auto-upgrade old data.\n\nARCHITECTURE RULES: sections are data-driven, never hardcoded. No API keys in the static site \u2014 Gemini and Notion both go through the same proxy (leaning Cloudflare Worker vs Val Town). Every version validated with node --check before shipping.\n\nDEPLOY: new GitHub repo > upload as index.html > Settings > Pages > deploy from main/root > open Pages URL > Share > Add to Home Screen. Use it a day before the next change (WIP=1).\n\nROADMAP: Gemini per node > sub-agents > iOS Shortcuts triggers.\n\nKNOWN GESTURES: long-press a node to edit or delete. Dashed + node adds a folder or link/note at the current level.\n\nWATCH: radial ring crowds past ~8-10 nodes; a list-view toggle is the planned fix for dense levels.",
+    rules:"WIP = 1: one change at a time, then live with it before the next.\nNo API keys in the static site \u2014 everything secret goes through the proxy.\nSections are data-driven, never hardcoded.\nValidate JS with node --check before shipping any version.\nKeep it a single self-contained HTML file.",
+    files:"This file (index.html) is the whole app. Reference material lives in the chat: the JARVIS orb screenshot and the Orbital Hub / radial-menu interaction references that shaped the design."
+  };}
+  function fresh(){ return { v:6, tree:{id:"root",kind:"folder",name:"HUB",children:defaultTop()}, system:defaultSystem() }; }
+  function migrate(old){
+    var root={id:"root",kind:"folder",name:"HUB",children:[]};
+    (old.sections||[]).forEach(function(s){
+      var f={id:s.id||uid(),kind:"folder",name:s.name||"Untitled",icon:s.icon,children:[]};
+      (((old.items||{})[s.id])||[]).forEach(function(it){
+        f.children.push({id:it.id||uid(),kind:"item",name:it.title||"Untitled",url:it.url||"",note:it.note||"",ts:it.ts});
+      });
+      root.children.push(f);
+    });
+    if(!root.children.length) root.children=defaultTop();
+    return { v:6, tree:root, system:defaultSystem() };
+  }
+  function load(){
+    if(mem) return mem;
+    try{
+      var raw=localStorage.getItem(KEY), p=raw?JSON.parse(raw):null;
+      if(!p) mem=fresh();
+      else if(p.tree) mem=p;
+      else if(p.sections) mem=migrate(p);
+      else mem=fresh();
+    }catch(e){ mem=fresh(); }
+    if(!mem||!mem.tree) mem=fresh();
+    if(!mem.system) mem.system=defaultSystem();
+    return mem;
+  }
+  function save(){ try{ localStorage.setItem(KEY,JSON.stringify(mem)); }catch(e){} }
+  return { data:load, commit:save, reset:function(){ mem=fresh(); save(); }, defaultSystem:defaultSystem };
+})();
+
+/* ---------- orb art ---------- */
+function hexPts(cx,cy,r){ var p=[]; for(var k=0;k<6;k++){ var a=(k*60-90)*Math.PI/180; p.push((cx+r*Math.cos(a)).toFixed(1)+","+(cy+r*Math.sin(a)).toFixed(1)); } return p.join(" "); }
+function orbSVG(){
+  var cells="", rings=[[0,0]], R=17;
+  [[34,6],[59,12]].forEach(function(cfg){ var rad=cfg[0],n=cfg[1];
+    for(var k=0;k<n;k++){ var a=(360/n*k)*Math.PI/180; rings.push([rad*Math.cos(a),rad*Math.sin(a)]); } });
+  rings.forEach(function(c){ var d=Math.hypot(c[0],c[1]); var lit=d<20||(Math.random()<0.18);
+    cells+='<polygon points="'+hexPts(100+c[0],100+c[1],R)+'" fill="'+(lit?'rgba(90,214,230,.55)':'rgba(20,55,70,.5)')+'" stroke="rgba(150,240,255,.45)" stroke-width="1"/>'; });
+  return '<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><defs>'
+    +'<radialGradient id="og" cx="42%" cy="38%" r="65%"><stop offset="0%" stop-color="#bff4ff"/>'
+    +'<stop offset="34%" stop-color="#2f9fb8"/><stop offset="72%" stop-color="#0a2c3c"/><stop offset="100%" stop-color="#03121a"/></radialGradient>'
+    +'<clipPath id="oc"><circle cx="100" cy="100" r="90"/></clipPath></defs>'
+    +'<g clip-path="url(#oc)"><circle cx="100" cy="100" r="90" fill="url(#og)">'+cells
+    +'<ellipse cx="78" cy="66" rx="30" ry="17" fill="rgba(255,255,255,.22)"/></g>'
+    +'<circle cx="100" cy="100" r="90" fill="none" stroke="rgba(150,240,255,.6)" stroke-width="1.5"/></svg>';
+}
+
+/* ---------- state ---------- */
+var root=Store.data().tree;
+var path=[root];
+var open=true;
+function cur(){ return path[path.length-1]; }
+var ORB_SVG=orbSVG();  /* cache so the sphere pattern never re-randomises */
+
+var stage=document.getElementById("stage");
+var orbit=document.getElementById("orbit");
+var hint=document.getElementById("hint");
+var crumb=document.getElementById("crumb");
+var flash=document.getElementById("flash");
+var veil=document.getElementById("veil");
+var sheet=document.getElementById("sheet");
+
+/* force a real pixel height so the render frame can never collapse to white */
+function fit(){ if(stage) stage.style.height=(window.innerHeight||document.documentElement.clientHeight||700)+"px"; }
+
+function buildStage(){
+  var c=document.createElement("div"); c.className="core"; c.id="core"; c.textContent="i";
+  c.addEventListener("click",function(e){ e.stopPropagation(); systemSheet(false); });
+  orbit.appendChild(c);                 /* core is persistent, always centred, always System */
+  renderLayers();
+}
+
+function project(){
+  open=true;
+  renderLayers(); setCrumb();
+  var deep=path.length>1;
+  hint.textContent = deep ? "Tap centre to go back" : "";
+  hint.style.opacity = deep ? "" : "0";
+}
+function closeOrbit(){  /* v7: never bare - return to the always-on top ring */
+  path=[root]; project();
+}
+function setOrb(){ var l=document.getElementById("orbLbl"); if(!l) return; var c=cur();
+  l.textContent=(c===root)?"MAINTAIN":(c.name.length>12?c.name.slice(0,11)+"\u2026":c.name.toUpperCase()); }
+function setCrumb(){ crumb.innerHTML=path.map(function(n,i){ var nm=(n===root?"HUB":n.name).toUpperCase();
+  return i===path.length-1?"<b>"+esc(nm)+"</b>":esc(nm); }).join(" \u203a "); }
+
+function renderLayers(){
+  Array.prototype.slice.call(orbit.querySelectorAll(".layer")).forEach(function(l){l.remove();});
+  var top=path.length-1;
+  var R=Math.min(150, window.innerWidth/2 - 46);
+  var Rsub=Math.min(118, window.innerWidth/2 - 40);
+  path.forEach(function(level,depth){
+    var dTop=top-depth, isFront=(dTop===0), isRoot=(depth===0);
+    var layer=document.createElement("div"); layer.className="layer"+(isFront?" front":" settled");
+    if(isRoot){
+      layer.innerHTML=
+         '<div class="ring ticks"></div><div class="ring r1"></div><div class="sweep"></div>'
+        +'<div class="ring r2"></div><div class="ring r3"></div><div class="base"></div>'
+        +'<div class="orb" id="orb"><div class="glow"></div>'+ORB_SVG+'<span class="lbl" id="orbLbl">MAINTAIN</span></div>';
+      [0,90,180,270].forEach(function(deg){
+        var aa=(deg-90)*Math.PI/180, rr=150;
+        var t=document.createElement("div"); t.className="tri";
+        t.style.transform="translate("+(Math.cos(aa)*rr-6).toFixed(1)+"px,"+(Math.sin(aa)*rr-4).toFixed(1)+"px) rotate("+deg+"deg)";
+        layer.appendChild(t);
+      });
+    } else {
+      var hub=document.createElement("div"); hub.className="hub";
+      hub.style.setProperty("--hx","0px"); hub.style.setProperty("--hy","0px");
+      hub.innerHTML='<span class="hi">'+esc(iconOr(level))+'</span><span class="hc">'+esc(level.name)+'</span>';
+      if(isFront) hub.addEventListener("click",function(e){ e.stopPropagation(); ascend(); });
+      layer.appendChild(hub);
+    }
+    var kids=(level.children||[]).map(function(k){return {t:"node",node:k};});
+    if(isFront) kids.push({t:"add"});
+    var n=Math.max(kids.length,1), radius=isRoot?R:Rsub;
+    kids.forEach(function(sl,idx){
+      var a=(-90 + 360/n*idx)*Math.PI/180;
+      var el=document.createElement("div");
+      el.style.setProperty("--x",(Math.cos(a)*radius).toFixed(1)+"px");
+      el.style.setProperty("--y",(Math.sin(a)*radius).toFixed(1)+"px");
+      if(isFront) el.style.transitionDelay=(idx*0.03)+"s";
+      if(sl.t==="add"){
+        el.className="node addch"+(isRoot?"":" sub"); el.innerHTML='<span class="ni">+</span><span class="cap">Add</span>';
+        if(isFront) wire(el, function(){ addSheet(); }, null);
+      }else{
+        var nd=sl.node, isFolder=(nd.kind!=="item");
+        el.className="node"+(isRoot?"":" sub")+(isFolder?" folder":"");
+        var badge=isFolder ? (nd.children&&nd.children.length?'<span class="ct">'+nd.children.length+'</span>':'')
+                           : (safeUrl(nd.url)?'<span class="lk">\u2197</span>':'');
+        el.innerHTML='<span class="ni">'+esc(iconOr(nd))+'</span>'+badge+'<span class="cap">'+esc(nd.name)+'</span>';
+        if(isFront) wire(el, function(){ isFolder?descend(nd):openItem(nd); }, function(){ manage(nd); });
+      }
+      layer.appendChild(el);
+    });
+    if(!isFront){
+      var sc=Math.pow(0.86,dTop), op=(0.3*Math.pow(0.6,dTop-1));
+      layer.style.transform="scale("+sc.toFixed(3)+")";
+      layer.style.opacity=op.toFixed(3);
+      layer.style.filter="blur(1.3px)";
+      layer.style.pointerEvents="none";
+    }
+    orbit.appendChild(layer);
+    if(isFront){ requestAnimationFrame(function(){ requestAnimationFrame(function(){ layer.classList.add("on"); }); }); }
+  });
+}
+
+function wire(el,onTap,onHold){
+  var timer=null, held=false;
+  el.addEventListener("touchstart",function(){ held=false; if(onHold) timer=setTimeout(function(){ held=true; if(navigator.vibrate)navigator.vibrate(10); onHold(); },480); },{passive:true});
+  el.addEventListener("touchmove",function(){ clearTimeout(timer); },{passive:true});
+  el.addEventListener("touchend",function(e){ clearTimeout(timer); if(held){ e.preventDefault(); } },{passive:false});
+  el.addEventListener("click",function(e){ e.stopPropagation(); if(held){ held=false; return; } onTap(); });
+}
+
+function descend(node){
+  var front=orbit.querySelector(".layer.front");
+  if(front){
+    front.classList.remove("front");
+    front.style.transform="scale(0.86)"; front.style.opacity="0.3";
+    front.style.filter="blur(1.3px)"; front.style.pointerEvents="none";
+    setTimeout(function(){ path.push(node); project(); }, 280);
+  } else { path.push(node); project(); }
+}
+function ascend(){
+  if(path.length<=1) return;
+  var front=orbit.querySelector(".layer.front");
+  if(front){ front.classList.remove("on"); front.style.pointerEvents="none";
+    setTimeout(function(){ path.pop(); project(); }, 240);
+  } else { path.pop(); project(); }
+}
+function openItem(node){ var url=safeUrl(node.url);
+  if(url) return openUrl(url);
+  if(node.note) return showFlash(node.note);
+  showFlash(node.name); }
+function showFlash(msg){ flash.textContent=msg; flash.classList.add("on"); clearTimeout(showFlash._t); showFlash._t=setTimeout(function(){ flash.classList.remove("on"); },1900); }
+
+/* ---------- sheets ---------- */
+function showSheet(html){ sheet.innerHTML=html; veil.classList.add("on"); }
+function closeSheet(){ veil.classList.remove("on"); }
+
+var formTarget=null;
+function formHTML(title,cid,kind,vals){
+  vals=vals||{};
+  return '<div class="grip"></div>'
+    +'<div class="shead"><button class="back" data-act="sheet-close" aria-label="Close">\u203a</button>'
+    +'<div class="tt"><div class="cid">'+esc(cid)+'</div><div class="nm">'+esc(title)+'</div></div></div>'
+    +'<div class="mform '+kind+'" id="mform">'
+    +'<div class="seg"><button data-kind="folder" class="'+(kind==="folder"?"on":"")+'">Folder</button>'
+    +'<button data-kind="item" class="'+(kind==="item"?"on":"")+'">Link / note</button></div>'
+    +'<div class="fld"><label>Name</label><div class="rowin">'
+    +'<input id="f-icon" class="ic" autocomplete="off" placeholder="\u2726" maxlength="3" value="'+esc(vals.icon||"")+'">'
+    +'<input id="f-name" autocomplete="off" placeholder="What is it?" value="'+esc(vals.name||"")+'"></div></div>'
+    +'<div class="linkonly">'
+    +'<div class="fld"><label>Link (optional)</label><input id="f-url" autocomplete="off" inputmode="url" placeholder="https:// or app link" value="'+esc(vals.url||"")+'"></div>'
+    +'<div class="fld"><label>Note (optional)</label><textarea id="f-note" placeholder="Details\u2026">'+esc(vals.note||"")+'</textarea></div>'
+    +'</div></div>'
+    +'<div class="acts"><button class="btn ghost" data-act="sheet-close">Cancel</button><button class="btn go" data-act="form-save">Save</button></div>';
+}
+function addSheet(){ formTarget=null; showSheet(formHTML("New in "+cur().name,"ADD","folder",{}));
+  setTimeout(function(){var t=document.getElementById("f-name"); if(t)t.focus();},60); }
+function editSheet(node){ formTarget=node; showSheet(formHTML("Edit","EDIT",(node.kind==="item"?"item":"folder"),node));
+  setTimeout(function(){var t=document.getElementById("f-name"); if(t)t.focus();},60); }
+function formSave(){
+  var mform=document.getElementById("mform");
+  var kind=mform.classList.contains("item")?"item":"folder";
+  var name=(document.getElementById("f-name").value||"").trim();
+  if(!name){ document.getElementById("f-name").focus(); return; }
+  var icon=(document.getElementById("f-icon").value||"").trim();
+  var url=kind==="item"?(document.getElementById("f-url").value||"").trim():"";
+  var note=kind==="item"?(document.getElementById("f-note").value||"").trim():"";
+  if(formTarget){
+    formTarget.name=name; formTarget.icon=icon||formTarget.icon;
+    if(kind==="item"){ formTarget.kind="item"; formTarget.url=url; formTarget.note=note; delete formTarget.children; }
+    else if(formTarget.kind==="item"){ formTarget.kind="folder"; formTarget.children=formTarget.children||[]; delete formTarget.url; delete formTarget.note; }
+  }else{
+    cur().children.push( kind==="item"
+      ? {id:uid(),kind:"item",name:name,icon:icon,url:url,note:note,ts:Date.now()}
+      : {id:uid(),kind:"folder",name:name,icon:icon,children:[]} );
+  }
+  Store.commit(); closeSheet(); project();
+}
+
+function manage(node){
+  formTarget=node; var url=safeUrl(node.url);
+  showSheet(
+    '<div class="grip"></div>'
+    +'<div class="shead"><button class="back" data-act="sheet-close" aria-label="Close">\u203a</button>'
+    +'<div class="tt"><div class="cid">'+(node.kind==="item"?"ITEM":"FOLDER")+'</div><div class="nm">'+esc(node.name)+'</div></div></div>'
+    +(node.note?'<div class="doc" style="margin-bottom:12px">'+esc(node.note)+'</div>':'')
+    +(url?'<button class="btn go full" data-act="open-managed">Open link</button>':'')
+    +'<button class="btn ghost full" data-act="edit-managed">Edit</button>'
+    +'<button class="btn danger full" data-act="del-managed">Delete</button>'
+  );
+}
+function delManaged(){
+  var node=formTarget; if(!node) return;
+  var kids=cur().children, n=(node.children&&node.children.length)||0;
+  if(n>0 && !confirm('Delete "'+node.name+'" and everything inside it?')) return;
+  for(var i=0;i<kids.length;i++){ if(kids[i].id===node.id){ kids.splice(i,1); break; } }
+  Store.commit(); closeSheet(); project();
+}
+
+/* ---------- system panel ---------- */
+var SYS_SECS=[["how","How it works"],["subagents","Subagents"],["buttons","Buttons \u2014 layout & functions"],
+  ["goal","Goal"],["handoff","Handoff"],["rules","Rules"],["files","Attached files"]];
+function systemSheet(edit){
+  var sys=Store.data().system||{};
+  if(edit){
+    var flds=SYS_SECS.map(function(s){
+      return '<div class="fld"><label>'+esc(s[1])+'</label><textarea id="sys-'+s[0]+'">'+esc(sys[s[0]]||"")+'</textarea></div>';
+    }).join("");
+    showSheet(
+      '<div class="grip"></div>'
+      +'<div class="shead"><button class="back" data-act="sys-view" aria-label="Back">\u2039</button>'
+      +'<div class="tt"><div class="cid">SYSTEM</div><div class="nm">Edit</div></div></div>'
+      +'<div class="list">'+flds+'</div>'
+      +'<div class="acts"><button class="btn ghost" data-act="sys-view">Cancel</button><button class="btn go" data-act="sys-save">Save</button></div>'
+    );
+    return;
+  }
+  var body=SYS_SECS.map(function(s){
+    var v=(sys[s[0]]||"").trim();
+    return '<div class="sec"><div class="sh">'+esc(s[1])+'</div>'
+      +'<div class="sb'+(v?"":" empty")+'">'+(v?esc(v):"(not set \u2014 tap Edit)")+'</div></div>';
+  }).join("");
+  showSheet(
+    '<div class="grip"></div>'
+    +'<div class="shead"><button class="back" data-act="sheet-close" aria-label="Close">\u203a</button>'
+    +'<div class="tt"><div class="cid">SYSTEM</div><div class="nm">How Maintain works</div></div>'
+    +'<button class="kill" data-act="sys-edit">EDIT</button></div>'
+    +'<div class="doc list">'+body+'</div>'
+    +'<button class="btn ghost full" data-act="reset">Reset to defaults</button>'
+    +'<div class="ver">MAINTAIN v7 \u00b7 persistent orbital</div>'
+  );
+}
+function sysSave(){
+  var sys=Store.data().system||(Store.data().system={});
+  SYS_SECS.forEach(function(s){ var el=document.getElementById("sys-"+s[0]); if(el) sys[s[0]]=el.value; });
+  Store.commit(); systemSheet(false);
+}
+
+/* ---------- events ---------- */
+document.addEventListener("click",function(e){
+  var t=e.target.closest("[data-act],[data-kind]"); if(!t) return;
+  if(t.hasAttribute("data-kind")){
+    var mf=document.getElementById("mform"); if(!mf) return;
+    mf.classList.remove("folder","item"); mf.classList.add(t.getAttribute("data-kind"));
+    Array.prototype.slice.call(mf.querySelectorAll(".seg button")).forEach(function(b){ b.classList.toggle("on",b===t); });
+    return;
+  }
+  switch(t.getAttribute("data-act")){
+    case "sheet-close": return closeSheet();
+    case "form-save": return formSave();
+    case "open-managed": var u=safeUrl(formTarget&&formTarget.url); closeSheet(); if(u) openUrl(u); return;
+    case "edit-managed": return editSheet(formTarget);
+    case "del-managed": return delManaged();
+    case "sys-view": return systemSheet(false);
+    case "sys-edit": return systemSheet(true);
+    case "sys-save": return sysSave();
+    case "reset": if(confirm("Reset Maintain to defaults? Clears all categories and system notes.")){ Store.reset(); root=Store.data().tree; path=[root]; closeSheet(); project(); } return;
+  }
+});
+veil.addEventListener("click",function(e){ if(e.target===veil) closeSheet(); });
+document.addEventListener("click",function(e){
+  if(veil.classList.contains("on")) return;
+  if(e.target.closest(".orb,.node,.hub,.core")) return;
+  if(path.length>1){ ascend(); }  /* tap empty space backs out; top ring stays */
+});
+window.addEventListener("resize",function(){ fit(); renderLayers(); });
+
+fit();
+try{ buildStage(); project(); }
+catch(err){
+  fit();
+  orbit.innerHTML='<div style="position:fixed;left:16px;right:16px;top:80px;color:#5ad6e6;font:12px ui-monospace,monospace;line-height:1.5;text-align:center">Init error \u2014 tell Claude:<br>'+String((err&&err.message)||err)+'</div>';
+}
+</script>
+</body>
+</html>
