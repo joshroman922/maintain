@@ -181,8 +181,8 @@
 "use strict";
 
 function esc(s){ return String(s==null?"":s)
-  .replace(/&/g,"&").replace(/</g,"<").replace(/>/g,">")
-  .replace(/"/g,""").replace(/'/g,"&#39;"); }
+  .replace(/&/g,"&"+"amp;").replace(/</g,"&"+"lt;").replace(/>/g,"&"+"gt;")
+  .replace(/"/g,"&"+"quot;").replace(/'/g,"&#39;"); }
 function safeUrl(u){
   u=(u||"").trim(); if(!u) return "";
   if(/^\s*(javascript|data|vbscript|blob|file):/i.test(u)) return "";
