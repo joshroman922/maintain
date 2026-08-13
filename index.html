@@ -531,5 +531,132 @@ catch(err){
   orbit.innerHTML='<div style="position:fixed;left:16px;right:16px;top:80px;color:#5ad6e6;font:12px ui-monospace,monospace;line-height:1.5;text-align:center">Init error \u2014 tell Claude:<br>'+String((err&&err.message)||err)+'</div>';
 }
 </script>
+
+<!-- ============================================================
+     MAINTAIN · GITHUB PUSH PANEL  (drop-in, self-contained)
+     ============================================================ -->
+<style>
+  #mp-fab{position:fixed;right:16px;bottom:16px;z-index:99998;
+    width:52px;height:52px;border-radius:50%;background:#0a0e14;
+    border:1px solid #2de1e1;color:#2de1e1;font-size:22px;
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 0 14px rgba(45,225,225,.35);cursor:pointer;}
+  #mp-wrap{position:fixed;inset:0;z-index:99999;display:none;
+    background:rgba(2,5,9,.86);backdrop-filter:blur(3px);
+    align-items:flex-end;}
+  #mp-wrap.open{display:flex;}
+  #mp-sheet{width:100%;max-height:90vh;overflow:auto;
+    background:#070b11;border-top:1px solid #2de1e1;
+    border-radius:16px 16px 0 0;padding:16px 16px 28px;
+    font-family:-apple-system,system-ui,sans-serif;color:#cfe9e9;}
+  #mp-sheet h3{margin:2px 0 12px;color:#2de1e1;font-size:15px;
+    letter-spacing:.5px;display:flex;justify-content:space-between;}
+  #mp-sheet label{display:block;font-size:11px;color:#7fb2b2;
+    margin:10px 0 4px;letter-spacing:.4px;text-transform:uppercase;}
+  #mp-sheet input,#mp-sheet textarea{width:100%;box-sizing:border-box;
+    background:#0c1219;border:1px solid #1c3540;border-radius:8px;
+    color:#e6faff;padding:10px;font-size:14px;font-family:ui-monospace,monospace;}
+  #mp-sheet textarea{min-height:180px;resize:vertical;}
+  #mp-row{display:flex;gap:8px;margin-top:14px;}
+  #mp-row button{flex:1;padding:12px;border-radius:8px;border:1px solid #2de1e1;
+    background:#0a0e14;color:#2de1e1;font-size:14px;font-weight:600;cursor:pointer;}
+  #mp-pull{border-color:#e0a83c;color:#e0a83c;}
+  #mp-close{background:none;border:none;color:#5a7a7a;font-size:20px;cursor:pointer;}
+  #mp-status{margin-top:12px;font-size:12px;min-height:16px;white-space:pre-wrap;
+    font-family:ui-monospace,monospace;color:#8fd;}
+  #mp-status.err{color:#ff6b6b;}
+  #mp-cfg{border-top:1px dashed #1c3540;margin-top:16px;padding-top:12px;}
+  #mp-cfg summary{color:#7fb2b2;font-size:12px;cursor:pointer;}
+</style>
+
+<div id="mp-fab" title="Push to GitHub">⑆</div>
+<div id="mp-wrap">
+  <div id="mp-sheet">
+    <h3>Push to GitHub <button id="mp-close">×</button></h3>
+    <label>File path in repo</label>
+    <input id="mp-path" placeholder="index.html" value="index.html" autocapitalize="off" autocorrect="off" spellcheck="false"/>
+    <label>Commit message</label>
+    <input id="mp-msg" placeholder="Maintain update"/>
+    <label>File content (paste the COMPLETE file)</label>
+    <textarea id="mp-content" placeholder="Paste the entire new file here…"></textarea>
+    <div id="mp-row">
+      <button id="mp-pull">Pull current</button>
+      <button id="mp-push">Push</button>
+    </div>
+    <div id="mp-status"></div>
+    <details id="mp-cfg">
+      <summary>⚙︎ Setup (stored on this phone only)</summary>
+      <label>Apps Script /exec URL</label>
+      <input id="mp-url" placeholder="https://script.google.com/macros/s/…/exec" autocapitalize="off" autocorrect="off" spellcheck="false"/>
+      <label>Shared secret</label>
+      <input id="mp-secret" type="password" placeholder="your SHARED_SECRET"/>
+      <button id="mp-save" style="margin-top:10px;width:100%;padding:10px;border-radius:8px;border:1px solid #2de1e1;background:#0a0e14;color:#2de1e1;">Save config on device</button>
+    </details>
+  </div>
+</div>
+
+<script>
+(function(){
+  var K={url:"mp.url",secret:"mp.secret"};
+  var $=function(id){return document.getElementById(id);};
+  function get(k){try{return localStorage.getItem(k)||"";}catch(e){return"";}}
+  function set(k,v){try{localStorage.setItem(k,v);}catch(e){}}
+  function say(msg,err){var s=$("mp-status");s.textContent=msg;s.className=err?"err":"";}
+  $("mp-url").value=get(K.url);
+  $("mp-secret").value=get(K.secret);
+  $("mp-fab").onclick=function(){$("mp-wrap").classList.add("open");};
+  $("mp-close").onclick=function(){$("mp-wrap").classList.remove("open");};
+  $("mp-wrap").onclick=function(e){if(e.target===$("mp-wrap"))$("mp-wrap").classList.remove("open");};
+  $("mp-save").onclick=function(){
+    set(K.url,$("mp-url").value.trim());
+    set(K.secret,$("mp-secret").value);
+    say("Config saved on this device.");
+  };
+  function cfg(){
+    var url=get(K.url),secret=get(K.secret);
+    if(!url||!secret){say("Set the URL and secret in ⚙︎ Setup first.",true);return null;}
+    return {url:url,secret:secret};
+  }
+  $("mp-pull").onclick=function(){
+    var c=cfg();if(!c)return;
+    var path=$("mp-path").value.trim()||"index.html";
+    say("Pulling "+path+" …");
+    fetch(c.url,{method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({secret:c.secret,path:path,mode:"read"})})
+      .then(function(r){return r.json();})
+      .then(function(d){
+        if(d.error){say("Error: "+d.error,true);return;}
+        if(d.exists===false){say("File doesn't exist yet — you can create it by pushing.");$("mp-content").value="";return;}
+        $("mp-content").value=d.content||"";
+        say("Loaded "+path+" ("+(d.content?d.content.length:0)+" chars). Edit, then Push.");
+      })
+      .catch(function(e){say("Network error: "+e,true);});
+  };
+  $("mp-push").onclick=function(){
+    var c=cfg();if(!c)return;
+    var path=$("mp-path").value.trim()||"index.html";
+    var content=$("mp-content").value;
+    if(!content){say("Nothing to push — content is empty.",true);return;}
+    if(!confirm("Commit "+content.length+" chars to "+path+"?"))return;
+    say("Pushing "+path+" …");
+    fetch(c.url,{method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({secret:c.secret,path:path,mode:"write",
+        content:content,message:$("mp-msg").value.trim()||"Maintain update"})})
+      .then(function(r){return r.json();})
+      .then(function(d){
+        if(d.error){say("Error: "+d.error,true);return;}
+        var st=d.status||(d.body&&d.body.commit?200:0);
+        if(st>=200&&st<300){
+          var sha=d.body&&d.body.commit?d.body.commit.sha:"";
+          say("✓ Committed"+(sha?" ("+sha.slice(0,7)+")":"")+".\nGitHub Pages will redeploy in ~1 min.");
+        } else {
+          say("GitHub responded "+st+":\n"+JSON.stringify(d.body||d,null,2),true);
+        }
+      })
+      .catch(function(e){say("Network error: "+e,true);});
+  };
+})();
+</script>
+<!-- ================= END GITHUB PUSH PANEL ================= -->
 </body>
 </html>
