@@ -22,10 +22,12 @@
   .stage{position:relative;min-height:100vh;min-height:100dvh;overflow:hidden}
   body::before{content:"";position:fixed;inset:0;z-index:0;
     background:
-      radial-gradient(60% 45% at 50% 40%,rgba(90,214,230,.16),transparent 60%),
-      radial-gradient(80% 60% at 50% 120%,rgba(90,214,230,.06),transparent 60%),
-      radial-gradient(rgba(90,214,230,.05) 1px,transparent 1px);
-    background-size:auto,auto,26px 26px}
+      radial-gradient(55% 40% at 50% 38%,rgba(90,214,230,.22),transparent 55%),
+      radial-gradient(70% 50% at 50% 110%,rgba(40,180,220,.1),transparent 60%),
+      radial-gradient(rgba(90,214,230,.07) 1px,transparent 1px);
+    background-size:auto,auto,22px 22px;
+    animation:gridPulse 8s ease-in-out infinite}
+  @keyframes gridPulse{0%,100%{opacity:.7}50%{opacity:1}}
 
   .crumb{position:fixed;top:calc(env(safe-area-inset-top) + 16px);left:14px;right:14px;z-index:15;
     font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--dim);text-transform:uppercase;
@@ -35,18 +37,18 @@
   #orbit{position:absolute;left:50%;top:42%;z-index:8;width:0;height:0}
 
   .ring{position:absolute;left:0;top:0;border-radius:50%;transform:translate(-50%,-50%);pointer-events:none}
-  .ring.r1{width:300px;height:300px;border:1px solid rgba(90,214,230,.28)}
-  .ring.r2{width:250px;height:250px;border:1px dashed rgba(90,214,230,.20);animation:spin 44s linear infinite}
-  .ring.r3{width:196px;height:196px;border:1px solid rgba(90,214,230,.16)}
+  .ring.r1{width:300px;height:300px;border:1px solid rgba(120,240,255,.45);box-shadow:0 0 18px rgba(90,214,230,.25)}
+  .ring.r2{width:250px;height:250px;border:1px dashed rgba(90,214,230,.28);animation:spin 44s linear infinite}
+  .ring.r3{width:196px;height:196px;border:1px solid rgba(90,214,230,.22)}
   .ring.ticks{width:326px;height:326px;
-    background:repeating-conic-gradient(from 0deg,rgba(90,214,230,.28) 0deg .5deg,transparent .5deg 9deg);
+    background:repeating-conic-gradient(from 0deg,rgba(90,214,230,.35) 0deg .5deg,transparent .5deg 9deg);
     -webkit-mask:radial-gradient(circle,transparent 0 156px,#000 156px 163px,transparent 163px);
     mask:radial-gradient(circle,transparent 0 156px,#000 156px 163px,transparent 163px);
-    animation:spin 90s linear infinite reverse}
+    animation:spin 90s linear infinite reverse;filter:drop-shadow(0 0 6px rgba(90,214,230,.5));opacity:.9}
   .sweep{position:absolute;left:0;top:0;width:300px;height:300px;border-radius:50%;transform:translate(-50%,-50%);
-    background:conic-gradient(from 0deg,rgba(90,214,230,.20),transparent 55deg);pointer-events:none;
+    background:conic-gradient(from 0deg,rgba(120,255,255,.35),transparent 50deg);pointer-events:none;
     -webkit-mask:radial-gradient(circle,transparent 0 40px,#000 40px);mask:radial-gradient(circle,transparent 0 40px,#000 40px);
-    animation:spin 6s linear infinite}
+    animation:spin 6s linear infinite;filter:blur(.5px)}
   @keyframes spin{to{transform:translate(-50%,-50%) rotate(360deg)}}
 
   .tri{position:absolute;left:0;top:0;width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;
@@ -56,19 +58,25 @@
 
   .orb{position:absolute;left:0;top:0;transform:translate(-50%,-50%);width:172px;height:172px;cursor:pointer;z-index:9}
   .orb .glow{position:absolute;inset:-28px;border-radius:50%;
-    background:radial-gradient(circle,rgba(90,214,230,.45),transparent 66%);animation:breathe 4.4s ease-in-out infinite}
+    background:radial-gradient(circle,rgba(90,214,230,.55),transparent 65%);
+    animation:breathe 3.8s ease-in-out infinite, holoShift 6s linear infinite}
   @keyframes breathe{0%,100%{opacity:.7;transform:scale(.98)}50%{opacity:1;transform:scale(1.03)}}
-  .orb svg{position:relative;display:block;width:172px;height:172px;filter:drop-shadow(0 0 18px rgba(90,214,230,.55))}
+  @keyframes holoShift{0%{filter:hue-rotate(0deg)}50%{filter:hue-rotate(25deg)}100%{filter:hue-rotate(0deg)}}
+  .orb svg{position:relative;display:block;width:172px;height:172px;filter:drop-shadow(0 0 22px rgba(90,214,230,.7))}
   .orb .lbl{position:absolute;left:50%;bottom:-2px;transform:translateX(-50%);white-space:nowrap;
     font-family:var(--mono);font-size:9px;letter-spacing:.22em;color:var(--cyan);text-shadow:0 0 8px rgba(90,214,230,.6)}
   .orb:active{transform:translate(-50%,-50%) scale(.96)}
 
-  /* Neon core - no letter, pure glow */
-  .core{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:7;width:42px;height:42px;border-radius:50%;
-    background:radial-gradient(circle at 50% 35%,#bff4ff 0%,#5ad6e6 35%,#1a6a7a 70%,#04121a 100%);
+  /* Holographic neon core */
+  .core{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:12;width:44px;height:44px;border-radius:50%;
+    background:radial-gradient(circle at 50% 30%,#e0ffff 0%,#5ad6e6 25%,#0a3a4a 70%,#020810 100%);
     border:2px solid rgba(191,244,255,.95);
-    box-shadow:0 0 22px rgba(90,214,230,1),0 0 40px rgba(90,214,230,.55),inset 0 1px 3px rgba(255,255,255,.7);
-    cursor:pointer}
+    box-shadow:0 0 12px #5ad6e6,0 0 30px rgba(90,214,230,.8),0 0 60px rgba(90,214,230,.4),inset 0 0 12px rgba(191,244,255,.6);
+    cursor:pointer;animation:holoPulse 3.2s ease-in-out infinite}
+  @keyframes holoPulse{
+    0%,100%{filter:brightness(1) saturate(1.1);transform:translate(-50%,-50%) scale(1)}
+    50%{filter:brightness(1.25) saturate(1.4);transform:translate(-50%,-50%) scale(1.06)}
+  }
   .core:active{transform:translate(-50%,-50%) scale(.88)}
 
   .node{position:absolute;left:0;top:0;width:66px;height:66px;margin:-33px 0 0 -33px;z-index:10;
@@ -172,11 +180,11 @@
     transform:translateX(-50%);z-index:40;
     display:flex;align-items:center;gap:12px;
     padding:11px 16px;
-    background:rgba(5,12,18,.88);
-    border:1px solid rgba(90,214,230,.38);
+    background:rgba(4,12,20,.75);
+    border:1px solid rgba(120,240,255,.5);
     border-radius:40px;
-    backdrop-filter:blur(14px);
-    box-shadow:0 0 24px rgba(90,214,230,.28),inset 0 1px 0 rgba(150,240,255,.12);
+    backdrop-filter:blur(18px) saturate(1.4);
+    box-shadow:0 0 30px rgba(90,214,230,.35),inset 0 0 12px rgba(90,214,230,.1);
   }
   .cmd-btn{
     width:48px;height:48px;border-radius:50%;
@@ -189,6 +197,20 @@
   }
   .cmd-btn:active{transform:scale(.9);border-color:#bff4ff;box-shadow:0 0 18px rgba(90,214,230,.55)}
   .cmd-btn.ai{font-size:24px;border-color:rgba(90,214,230,.7);box-shadow:0 0 16px rgba(90,214,230,.4)}
+
+  /* Left gears Settings button */
+  #gears-btn{
+    position:fixed;left:16px;bottom:calc(env(safe-area-inset-bottom) + 28px);z-index:40;
+    width:52px;height:52px;border-radius:50%;
+    border:1.5px solid rgba(120,240,255,.6);
+    background:radial-gradient(circle at 50% 30%,rgba(30,60,80,.95),rgba(6,14,22,.98));
+    color:#5ad6e6;display:grid;place-items:center;
+    font-size:24px;cursor:pointer;
+    box-shadow:0 0 18px rgba(90,214,230,.4),inset 0 0 10px rgba(90,214,230,.15);
+    animation:gearsSpin 8s linear infinite;
+  }
+  #gears-btn:active{transform:scale(.9)}
+  @keyframes gearsSpin{to{transform:rotate(360deg)}}
 
   /* AI chat panel */
   #ai-wrap{position:fixed;inset:0;z-index:60;display:none;align-items:flex-end;justify-content:center;
@@ -206,15 +228,12 @@
   #ai-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
   #ai-head h3{font-size:15px;color:#5ad6e6;letter-spacing:.4px;margin:0}
   #ai-close{background:none;border:none;color:#7a9aaa;font-size:22px;cursor:pointer;padding:4px 8px}
-  #ai-body{flex:1;overflow-y:auto;font-size:14px;line-height:1.55;color:#c8e0ea;padding:8px 4px;
-    min-height:180px}
+  #ai-body{flex:1;overflow-y:auto;font-size:14px;line-height:1.55;color:#c8e0ea;padding:8px 4px;min-height:180px}
   #ai-body .msg{margin-bottom:12px;padding:10px 12px;border-radius:12px;max-width:92%}
   #ai-body .bot{background:rgba(90,214,230,.12);border:1px solid rgba(90,214,230,.25)}
   #ai-input-row{display:flex;gap:8px;margin-top:10px}
-  #ai-input{flex:1;background:#0a1219;border:1px solid rgba(90,214,230,.3);border-radius:12px;
-    color:#e0f4ff;padding:12px 14px;font-size:15px}
-  #ai-send{padding:0 16px;border-radius:12px;border:1px solid #5ad6e6;background:rgba(90,214,230,.15);
-    color:#5ad6e6;font-weight:600;cursor:pointer}
+  #ai-input{flex:1;background:#0a1219;border:1px solid rgba(90,214,230,.3);border-radius:12px;color:#e0f4ff;padding:12px 14px;font-size:15px}
+  #ai-send{padding:0 16px;border-radius:12px;border:1px solid #5ad6e6;background:rgba(90,214,230,.15);color:#5ad6e6;font-weight:600;cursor:pointer}
 
   @media (prefers-reduced-motion:reduce){*{animation:none!important}.node{transition:opacity .2s}}
 </style>
@@ -229,6 +248,9 @@
 
 <div class="flash" id="flash"></div>
 <div class="veil" id="veil"><div class="sheet" id="sheet"></div></div>
+
+<!-- Left gears Settings -->
+<button id="gears-btn" title="Settings">⚙</button>
 
 <!-- COMMAND BELT -->
 <div id="cmd-belt">
@@ -285,10 +307,10 @@ var Store=(function(){
   function defaultSystem(){ return {
     how:"Your top categories always circle the core — nothing to open first. Tap any category to descend into its sub-categories, which then circle the core the same way, rings within rings. Tap the orb (or empty space) to back out one level. The centre neon core is always the System panel.",
     subagents:"Planned: each node can hand off to a Gemini sub-agent (via the proxy). Not built yet — first deploy, then stand up the proxy, then wire agents per node.",
-    buttons:"Orb body — tap to back out one level (top categories stay visible).\nCentre neon core — this System panel.\nDashed + node — add a folder or a link/note at the current level.\nLong-press a node — edit or delete it.\nBottom Command Belt — Phone, Messages, Camera (Shortcuts) + Gemini chat.",
-    goal:"Maintain is a personal life-OS console — one home screen for every part of my life, hosted on GitHub Pages and pinned to my iPhone home screen. The long game: each node can hand off to a Gemini sub-agent, and iOS Shortcuts can trigger actions.",
-    handoff:"PROJECT: Maintain — single-file HTML life-OS console for iPhone.\n\nAESTHETIC: JARVIS-style orbital HUD. Cyan structure, amber counts, dark void background. Central hex-sphere orb with concentric rings, ticks, radar sweep, reflective base.\n\nNAVIGATION (v7): Top categories ALWAYS circle the core.\n\nCENTRE CORE: pure neon orb (no letter) opens System panel.\n\nCOMMAND BELT: bottom floating pill — Phone / Messages / Camera (iOS Shortcuts) + AI robot head for in-app Gemini panel.",
-    rules:"WIP = 1: one change at a time, then live with it before the next.\nNo API keys in the static site — everything secret goes through the proxy.\nSections are data-driven, never hardcoded.\nValidate JS with node --check before shipping any version.\nKeep it a single self-contained HTML file.",
+    buttons:"Orb body — tap to back out one level.\nCentre neon core — System panel.\nDashed + node — add folder or link/note.\nLong-press a node — edit or delete.\nBottom Command Belt — Phone, Messages, Camera (Shortcuts) + Gemini.\nLeft gears — Settings.",
+    goal:"Maintain is a personal life-OS console — one home screen for every part of my life, hosted on GitHub Pages and pinned to my iPhone home screen.",
+    handoff:"PROJECT: Maintain — single-file HTML life-OS console for iPhone.\n\nAESTHETIC: JARVIS-style orbital HUD with holographic neon.\n\nCOMMAND BELT: bottom floating pill — Phone / Messages / Camera + AI.\nLEFT GEARS: Settings button.",
+    rules:"WIP = 1: one change at a time.\nNo API keys in the static site.\nSections are data-driven.\nKeep it a single self-contained HTML file.",
     files:"This file (index.html) is the whole app."
   };}
   function fresh(){ return { v:6, tree:{id:"root",kind:"folder",name:"HUB",children:defaultTop()}, system:defaultSystem() }; }
@@ -561,7 +583,7 @@ function systemSheet(edit){
     +'<button class="kill" data-act="sys-edit">EDIT</button></div>'
     +'<div class="doc list">'+body+'</div>'
     +'<button class="btn ghost full" data-act="reset">Reset to defaults</button>'
-    +'<div class="ver">MAINTAIN v7.1 · Command Belt</div>'
+    +'<div class="ver">MAINTAIN v7.2 · Holographic</div>'
   );
 }
 function sysSave(){
@@ -594,20 +616,25 @@ document.addEventListener("click",function(e){
 veil.addEventListener("click",function(e){ if(e.target===veil) closeSheet(); });
 document.addEventListener("click",function(e){
   if(veil.classList.contains("on")) return;
-  if(e.target.closest(".orb,.node,.hub,.core,#cmd-belt,#ai-wrap")) return;
+  if(e.target.closest(".orb,.node,.hub,.core,#cmd-belt,#ai-wrap,#gears-btn")) return;
   if(path.length>1){ ascend(); }
 });
 window.addEventListener("resize",function(){ fit(); renderLayers(); });
 
-/* ---------- Command Belt ---------- */
+/* ---------- Command Belt + Gears ---------- */
 function runShortcut(name){
-  // iOS Shortcuts URL scheme
   var url = "shortcuts://run-shortcut?name=" + encodeURIComponent(name);
   window.location.href = url;
 }
 document.getElementById("cmd-phone").onclick = function(){ runShortcut("Maintain phone"); };
 document.getElementById("cmd-msg").onclick = function(){ runShortcut("maintain message"); };
 document.getElementById("cmd-cam").onclick = function(){ runShortcut("maintain Camera"); };
+
+// Gears Settings — tries native Settings, falls back to Shortcuts if you make one later
+document.getElementById("gears-btn").onclick = function(){
+  // Best-effort iOS Settings open
+  window.location.href = "App-prefs:";
+};
 
 document.getElementById("cmd-ai").onclick = function(){
   document.getElementById("ai-wrap").classList.add("open");
