@@ -62,10 +62,13 @@
   .orb .lbl{position:absolute;left:50%;bottom:-2px;transform:translateX(-50%);white-space:nowrap;
     font-family:var(--mono);font-size:9px;letter-spacing:.22em;color:var(--cyan);text-shadow:0 0 8px rgba(90,214,230,.6)}
   .orb:active{transform:translate(-50%,-50%) scale(.96)}
-  .core{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:12;width:36px;height:36px;border-radius:50%;
-    background:radial-gradient(circle at 50% 38%,#dffaff,#3fb4cc 58%,#0a2c3c);
-    border:1px solid rgba(190,244,255,.9);box-shadow:0 0 16px rgba(90,214,230,.85),inset 0 1px 2px rgba(255,255,255,.6);
-    display:grid;place-items:center;cursor:pointer;font:italic 700 17px/1 Georgia,"Times New Roman",serif;color:#04121a}
+
+  /* Neon core - no letter, pure glow */
+  .core{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:7;width:42px;height:42px;border-radius:50%;
+    background:radial-gradient(circle at 50% 35%,#bff4ff 0%,#5ad6e6 35%,#1a6a7a 70%,#04121a 100%);
+    border:2px solid rgba(191,244,255,.95);
+    box-shadow:0 0 22px rgba(90,214,230,1),0 0 40px rgba(90,214,230,.55),inset 0 1px 3px rgba(255,255,255,.7);
+    cursor:pointer}
   .core:active{transform:translate(-50%,-50%) scale(.88)}
 
   .node{position:absolute;left:0;top:0;width:66px;height:66px;margin:-33px 0 0 -33px;z-index:10;
@@ -106,10 +109,10 @@
   .node.addch .ni{color:var(--dim);font-size:22px}
   .node.addch .cap{color:var(--dim)}
 
-  .hint{position:fixed;left:0;right:0;bottom:calc(env(safe-area-inset-bottom) + 26px);text-align:center;z-index:6;
+  .hint{position:fixed;left:0;right:0;bottom:calc(env(safe-area-inset-bottom) + 110px);text-align:center;z-index:6;
     font-family:var(--mono);font-size:11px;letter-spacing:.16em;color:var(--dim);text-transform:uppercase;
     transition:opacity .3s;pointer-events:none}
-  .flash{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 74px);transform:translate(-50%,8px);z-index:25;
+  .flash{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 130px);transform:translate(-50%,8px);z-index:25;
     max-width:82vw;background:rgba(10,22,32,.95);border:1px solid var(--line);border-radius:12px;padding:11px 15px;
     font-size:13px;color:var(--ink);opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;text-align:center}
   .flash.on{opacity:1;transform:translate(-50%,0)}
@@ -163,6 +166,56 @@
   .list{overflow-y:auto;-webkit-overflow-scrolling:touch;flex:1}
   .ver{font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--dim);opacity:.55;text-align:center;margin-top:10px}
 
+  /* ===== COMMAND BELT ===== */
+  #cmd-belt{
+    position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 22px);
+    transform:translateX(-50%);z-index:40;
+    display:flex;align-items:center;gap:12px;
+    padding:11px 16px;
+    background:rgba(5,12,18,.88);
+    border:1px solid rgba(90,214,230,.38);
+    border-radius:40px;
+    backdrop-filter:blur(14px);
+    box-shadow:0 0 24px rgba(90,214,230,.28),inset 0 1px 0 rgba(150,240,255,.12);
+  }
+  .cmd-btn{
+    width:48px;height:48px;border-radius:50%;
+    border:1px solid rgba(90,214,230,.5);
+    background:radial-gradient(circle at 50% 32%,rgba(30,55,70,.95),rgba(6,14,22,.98));
+    color:#5ad6e6;display:grid;place-items:center;
+    font-size:22px;cursor:pointer;
+    box-shadow:0 0 12px rgba(90,214,230,.25);
+    transition:transform .15s,border-color .15s,box-shadow .15s;
+  }
+  .cmd-btn:active{transform:scale(.9);border-color:#bff4ff;box-shadow:0 0 18px rgba(90,214,230,.55)}
+  .cmd-btn.ai{font-size:24px;border-color:rgba(90,214,230,.7);box-shadow:0 0 16px rgba(90,214,230,.4)}
+
+  /* AI chat panel */
+  #ai-wrap{position:fixed;inset:0;z-index:60;display:none;align-items:flex-end;justify-content:center;
+    background:rgba(2,5,9,.7);backdrop-filter:blur(6px)}
+  #ai-wrap.open{display:flex}
+  #ai-panel{
+    width:100%;max-width:520px;max-height:78vh;
+    background:linear-gradient(165deg,rgba(8,18,28,.97),rgba(4,10,16,.99));
+    border:1px solid rgba(90,214,230,.45);
+    border-radius:22px 22px 0 0;
+    box-shadow:0 -10px 50px rgba(0,0,0,.6),0 0 30px rgba(90,214,230,.2);
+    display:flex;flex-direction:column;
+    padding:14px 14px calc(env(safe-area-inset-bottom) + 14px);
+  }
+  #ai-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+  #ai-head h3{font-size:15px;color:#5ad6e6;letter-spacing:.4px;margin:0}
+  #ai-close{background:none;border:none;color:#7a9aaa;font-size:22px;cursor:pointer;padding:4px 8px}
+  #ai-body{flex:1;overflow-y:auto;font-size:14px;line-height:1.55;color:#c8e0ea;padding:8px 4px;
+    min-height:180px}
+  #ai-body .msg{margin-bottom:12px;padding:10px 12px;border-radius:12px;max-width:92%}
+  #ai-body .bot{background:rgba(90,214,230,.12);border:1px solid rgba(90,214,230,.25)}
+  #ai-input-row{display:flex;gap:8px;margin-top:10px}
+  #ai-input{flex:1;background:#0a1219;border:1px solid rgba(90,214,230,.3);border-radius:12px;
+    color:#e0f4ff;padding:12px 14px;font-size:15px}
+  #ai-send{padding:0 16px;border-radius:12px;border:1px solid #5ad6e6;background:rgba(90,214,230,.15);
+    color:#5ad6e6;font-weight:600;cursor:pointer}
+
   @media (prefers-reduced-motion:reduce){*{animation:none!important}.node{transition:opacity .2s}}
 </style>
 </head>
@@ -176,6 +229,31 @@
 
 <div class="flash" id="flash"></div>
 <div class="veil" id="veil"><div class="sheet" id="sheet"></div></div>
+
+<!-- COMMAND BELT -->
+<div id="cmd-belt">
+  <button class="cmd-btn" id="cmd-phone" title="Contacts">📞</button>
+  <button class="cmd-btn" id="cmd-msg" title="Messages">💬</button>
+  <button class="cmd-btn" id="cmd-cam" title="Camera">📷</button>
+  <button class="cmd-btn ai" id="cmd-ai" title="Gemini">🤖</button>
+</div>
+
+<!-- AI floating chat -->
+<div id="ai-wrap">
+  <div id="ai-panel">
+    <div id="ai-head">
+      <h3>✦ GEMINI</h3>
+      <button id="ai-close">×</button>
+    </div>
+    <div id="ai-body">
+      <div class="msg bot">Neon liquid channel ready.<br><br>Real Gemini conversation needs a proxy (API key stays off the phone). For now this panel is the visual shell — next step is wiring the backend.</div>
+    </div>
+    <div id="ai-input-row">
+      <input id="ai-input" placeholder="Message Gemini…" autocomplete="off">
+      <button id="ai-send">Send</button>
+    </div>
+  </div>
+</div>
 
 <script>
 "use strict";
@@ -205,13 +283,13 @@ var Store=(function(){
     folder("Files","\uD83D\uDDC2\uFE0F"), folder("Study / Journal","\uD83D\uDCD3")
   ];}
   function defaultSystem(){ return {
-    how:"Your top categories always circle the core \u2014 nothing to open first. Tap any category to descend into its sub-categories, which then circle the core the same way, rings within rings. Tap the orb (or empty space) to back out one level. The centre \u201Ci\u201D core is always the System panel.",
-    subagents:"Planned: each node can hand off to a Gemini sub-agent (via the proxy). Not built yet \u2014 first deploy, then stand up the proxy, then wire agents per node.",
-    buttons:"Orb body \u2014 tap to back out one level (top categories stay visible).\nCentre \u201Ci\u201D core \u2014 this System panel.\nDashed + node \u2014 add a folder or a link/note at the current level.\nLong-press a node \u2014 edit or delete it.",
-    goal:"Maintain is a personal life-OS console \u2014 one home screen for every part of my life, hosted on GitHub Pages and pinned to my iPhone home screen. The long game: each node can hand off to a Gemini sub-agent, and iOS Shortcuts can trigger actions. This file is the single source of truth until storage moves to Notion behind a proxy.",
-    handoff:"PROJECT: Maintain \u2014 single-file HTML life-OS console for iPhone.\n\nAESTHETIC: JARVIS-style orbital HUD. Cyan structure, amber counts, dark void background. Central hex-sphere orb with concentric rings, ticks, radar sweep, reflective base.\n\nNAVIGATION (v7): Top categories ALWAYS circle the core \u2014 no open/closed state. Tap a category to descend into its sub-categories, which circle the core the same way (rings within rings). Tap the orb or empty space to back out one level; you always land on a populated ring, never a bare sphere. Breadcrumb shows HUB > Category > \u2026\n\nCENTRE CORE: the glowing \u201Ci\u201D dot dead-centre opens this System panel at every level. It is the home for subagents, files, handoff and rules \u2014 the growing control centre.\n\nCATEGORIES (6 seeded): Social, Health, Routine / Protocol, Work, Files, Study / Journal.\n\nSTORAGE: single Store abstraction (localStorage now, in-memory fallback). Designed as a drop-in swap to Notion via a key-holding proxy later. Data model schema versioned; migrations auto-upgrade old data.\n\nARCHITECTURE RULES: sections are data-driven, never hardcoded. No API keys in the static site \u2014 Gemini and Notion both go through the same proxy (leaning Cloudflare Worker vs Val Town). Every version validated with node --check before shipping.\n\nDEPLOY: new GitHub repo > upload as index.html > Settings > Pages > deploy from main/root > open Pages URL > Share > Add to Home Screen. Use it a day before the next change (WIP=1).\n\nROADMAP: Gemini per node > sub-agents > iOS Shortcuts triggers.\n\nKNOWN GESTURES: long-press a node to edit or delete. Dashed + node adds a folder or link/note at the current level.\n\nWATCH: radial ring crowds past ~8-10 nodes; a list-view toggle is the planned fix for dense levels.",
-    rules:"WIP = 1: one change at a time, then live with it before the next.\nNo API keys in the static site \u2014 everything secret goes through the proxy.\nSections are data-driven, never hardcoded.\nValidate JS with node --check before shipping any version.\nKeep it a single self-contained HTML file.",
-    files:"This file (index.html) is the whole app. Reference material lives in the chat: the JARVIS orb screenshot and the Orbital Hub / radial-menu interaction references that shaped the design."
+    how:"Your top categories always circle the core — nothing to open first. Tap any category to descend into its sub-categories, which then circle the core the same way, rings within rings. Tap the orb (or empty space) to back out one level. The centre neon core is always the System panel.",
+    subagents:"Planned: each node can hand off to a Gemini sub-agent (via the proxy). Not built yet — first deploy, then stand up the proxy, then wire agents per node.",
+    buttons:"Orb body — tap to back out one level (top categories stay visible).\nCentre neon core — this System panel.\nDashed + node — add a folder or a link/note at the current level.\nLong-press a node — edit or delete it.\nBottom Command Belt — Phone, Messages, Camera (Shortcuts) + Gemini chat.",
+    goal:"Maintain is a personal life-OS console — one home screen for every part of my life, hosted on GitHub Pages and pinned to my iPhone home screen. The long game: each node can hand off to a Gemini sub-agent, and iOS Shortcuts can trigger actions.",
+    handoff:"PROJECT: Maintain — single-file HTML life-OS console for iPhone.\n\nAESTHETIC: JARVIS-style orbital HUD. Cyan structure, amber counts, dark void background. Central hex-sphere orb with concentric rings, ticks, radar sweep, reflective base.\n\nNAVIGATION (v7): Top categories ALWAYS circle the core.\n\nCENTRE CORE: pure neon orb (no letter) opens System panel.\n\nCOMMAND BELT: bottom floating pill — Phone / Messages / Camera (iOS Shortcuts) + AI robot head for in-app Gemini panel.",
+    rules:"WIP = 1: one change at a time, then live with it before the next.\nNo API keys in the static site — everything secret goes through the proxy.\nSections are data-driven, never hardcoded.\nValidate JS with node --check before shipping any version.\nKeep it a single self-contained HTML file.",
+    files:"This file (index.html) is the whole app."
   };}
   function fresh(){ return { v:6, tree:{id:"root",kind:"folder",name:"HUB",children:defaultTop()}, system:defaultSystem() }; }
   function migrate(old){
@@ -265,7 +343,7 @@ var root=Store.data().tree;
 var path=[root];
 var open=true;
 function cur(){ return path[path.length-1]; }
-var ORB_SVG=orbSVG();  /* cache so the sphere pattern never re-randomises */
+var ORB_SVG=orbSVG();
 
 var stage=document.getElementById("stage");
 var orbit=document.getElementById("orbit");
@@ -275,13 +353,12 @@ var flash=document.getElementById("flash");
 var veil=document.getElementById("veil");
 var sheet=document.getElementById("sheet");
 
-/* force a real pixel height so the render frame can never collapse to white */
 function fit(){ if(stage) stage.style.height=(window.innerHeight||document.documentElement.clientHeight||700)+"px"; }
 
 function buildStage(){
-  var c=document.createElement("div"); c.className="core"; c.id="core"; c.textContent="i";
+  var c=document.createElement("div"); c.className="core"; c.id="core";
   c.addEventListener("click",function(e){ e.stopPropagation(); systemSheet(false); });
-  orbit.appendChild(c);                 /* core is persistent, always centred, always System */
+  orbit.appendChild(c);
   renderLayers();
 }
 
@@ -292,13 +369,11 @@ function project(){
   hint.textContent = deep ? "Tap centre to go back" : "";
   hint.style.opacity = deep ? "" : "0";
 }
-function closeOrbit(){  /* v7: never bare - return to the always-on top ring */
-  path=[root]; project();
-}
+function closeOrbit(){ path=[root]; project(); }
 function setOrb(){ var l=document.getElementById("orbLbl"); if(!l) return; var c=cur();
-  l.textContent=(c===root)?"MAINTAIN":(c.name.length>12?c.name.slice(0,11)+"\u2026":c.name.toUpperCase()); }
+  l.textContent=(c===root)?"MAINTAIN":(c.name.length>12?c.name.slice(0,11)+"…":c.name.toUpperCase()); }
 function setCrumb(){ crumb.innerHTML=path.map(function(n,i){ var nm=(n===root?"HUB":n.name).toUpperCase();
-  return i===path.length-1?"<b>"+esc(nm)+"</b>":esc(nm); }).join(" \u203a "); }
+  return i===path.length-1?"<b>"+esc(nm)+"</b>":esc(nm); }).join(" › "); }
 
 function renderLayers(){
   Array.prototype.slice.call(orbit.querySelectorAll(".layer")).forEach(function(l){l.remove();});
@@ -342,7 +417,7 @@ function renderLayers(){
         var nd=sl.node, isFolder=(nd.kind!=="item");
         el.className="node"+(isRoot?"":" sub")+(isFolder?" folder":"");
         var badge=isFolder ? (nd.children&&nd.children.length?'<span class="ct">'+nd.children.length+'</span>':'')
-                           : (safeUrl(nd.url)?'<span class="lk">\u2197</span>':'');
+                           : (safeUrl(nd.url)?'<span class="lk">↗</span>':'');
         el.innerHTML='<span class="ni">'+esc(iconOr(nd))+'</span>'+badge+'<span class="cap">'+esc(nd.name)+'</span>';
         if(isFront) wire(el, function(){ isFolder?descend(nd):openItem(nd); }, function(){ manage(nd); });
       }
@@ -398,17 +473,17 @@ var formTarget=null;
 function formHTML(title,cid,kind,vals){
   vals=vals||{};
   return '<div class="grip"></div>'
-    +'<div class="shead"><button class="back" data-act="sheet-close" aria-label="Close">\u203a</button>'
-    +'<div class="tt"><div class="cid">'+esc(cid)+'</div><div class="nm">'+esc(title)+'</div></div>'
+    +'<div class="shead"><button class="back" data-act="sheet-close" aria-label="Close">›</button>'
+    +'<div class="tt"><div class="cid">'+esc(cid)+'</div><div class="nm">'+esc(title)+'</div></div></div>'
     +'<div class="mform '+kind+'" id="mform">'
     +'<div class="seg"><button data-kind="folder" class="'+(kind==="folder"?"on":"")+'">Folder</button>'
     +'<button data-kind="item" class="'+(kind==="item"?"on":"")+'">Link / note</button></div>'
     +'<div class="fld"><label>Name</label><div class="rowin">'
-    +'<input id="f-icon" class="ic" autocomplete="off" placeholder="\u2726" maxlength="3" value="'+esc(vals.icon||"")+'">'
+    +'<input id="f-icon" class="ic" autocomplete="off" placeholder="✦" maxlength="3" value="'+esc(vals.icon||"")+'">'
     +'<input id="f-name" autocomplete="off" placeholder="What is it?" value="'+esc(vals.name||"")+'"></div></div>'
     +'<div class="linkonly">'
     +'<div class="fld"><label>Link (optional)</label><input id="f-url" autocomplete="off" inputmode="url" placeholder="https:// or app link" value="'+esc(vals.url||"")+'"></div>'
-    +'<div class="fld"><label>Note (optional)</label><textarea id="f-note" placeholder="Details\u2026">'+esc(vals.note||"")+'</textarea></div>'
+    +'<div class="fld"><label>Note (optional)</label><textarea id="f-note" placeholder="Details…">'+esc(vals.note||"")+'</textarea></div>'
     +'</div></div>'
     +'<div class="acts"><button class="btn ghost" data-act="sheet-close">Cancel</button><button class="btn go" data-act="form-save">Save</button></div>';
 }
@@ -440,8 +515,8 @@ function manage(node){
   formTarget=node; var url=safeUrl(node.url);
   showSheet(
     '<div class="grip"></div>'
-    +'<div class="shead"><button class="back" data-act="sheet-close" aria-label="Close">\u203a</button>'
-    +'<div class="tt"><div class="cid">'+(node.kind==="item"?"ITEM":"FOLDER")+'</div><div class="nm">'+esc(node.name)+'</div></div>'
+    +'<div class="shead"><button class="back" data-act="sheet-close" aria-label="Close">›</button>'
+    +'<div class="tt"><div class="cid">'+(node.kind==="item"?"ITEM":"FOLDER")+'</div><div class="nm">'+esc(node.name)+'</div></div></div>'
     +(node.note?'<div class="doc" style="margin-bottom:12px">'+esc(node.note)+'</div>':'')
     +(url?'<button class="btn go full" data-act="open-managed">Open link</button>':'')
     +'<button class="btn ghost full" data-act="edit-managed">Edit</button>'
@@ -457,7 +532,7 @@ function delManaged(){
 }
 
 /* ---------- system panel ---------- */
-var SYS_SECS=[["how","How it works"],["subagents","Subagents"],["buttons","Buttons \u2014 layout & functions"],
+var SYS_SECS=[["how","How it works"],["subagents","Subagents"],["buttons","Buttons — layout & functions"],
   ["goal","Goal"],["handoff","Handoff"],["rules","Rules"],["files","Attached files"]];
 function systemSheet(edit){
   var sys=Store.data().system||{};
@@ -467,7 +542,7 @@ function systemSheet(edit){
     }).join("");
     showSheet(
       '<div class="grip"></div>'
-      +'<div class="shead"><button class="back" data-act="sys-view" aria-label="Back">\u2039</button>'
+      +'<div class="shead"><button class="back" data-act="sys-view" aria-label="Back">‹</button>'
       +'<div class="tt"><div class="cid">SYSTEM</div><div class="nm">Edit</div></div></div>'
       +'<div class="list">'+flds+'</div>'
       +'<div class="acts"><button class="btn ghost" data-act="sys-view">Cancel</button><button class="btn go" data-act="sys-save">Save</button></div>'
@@ -477,16 +552,16 @@ function systemSheet(edit){
   var body=SYS_SECS.map(function(s){
     var v=(sys[s[0]]||"").trim();
     return '<div class="sec"><div class="sh">'+esc(s[1])+'</div>'
-      +'<div class="sb'+(v?"":" empty")+'">'+(v?esc(v):"(not set \u2014 tap Edit)")+'</div></div>';
+      +'<div class="sb'+(v?"":" empty")+'">'+(v?esc(v):"(not set — tap Edit)")+'</div></div>';
   }).join("");
   showSheet(
     '<div class="grip"></div>'
-    +'<div class="shead"><button class="back" data-act="sheet-close" aria-label="Close">\u203a</button>'
+    +'<div class="shead"><button class="back" data-act="sheet-close" aria-label="Close">›</button>'
     +'<div class="tt"><div class="cid">SYSTEM</div><div class="nm">How Maintain works</div></div>'
     +'<button class="kill" data-act="sys-edit">EDIT</button></div>'
     +'<div class="doc list">'+body+'</div>'
     +'<button class="btn ghost full" data-act="reset">Reset to defaults</button>'
-    +'<div class="ver">MAINTAIN v7 \u00b7 persistent orbital</div>'
+    +'<div class="ver">MAINTAIN v7.1 · Command Belt</div>'
   );
 }
 function sysSave(){
@@ -519,16 +594,46 @@ document.addEventListener("click",function(e){
 veil.addEventListener("click",function(e){ if(e.target===veil) closeSheet(); });
 document.addEventListener("click",function(e){
   if(veil.classList.contains("on")) return;
-  if(e.target.closest(".orb,.node,.hub,.core")) return;
-  if(path.length>1){ ascend(); }  /* tap empty space backs out; top ring stays */
+  if(e.target.closest(".orb,.node,.hub,.core,#cmd-belt,#ai-wrap")) return;
+  if(path.length>1){ ascend(); }
 });
 window.addEventListener("resize",function(){ fit(); renderLayers(); });
+
+/* ---------- Command Belt ---------- */
+function runShortcut(name){
+  // iOS Shortcuts URL scheme
+  var url = "shortcuts://run-shortcut?name=" + encodeURIComponent(name);
+  window.location.href = url;
+}
+document.getElementById("cmd-phone").onclick = function(){ runShortcut("Maintain phone"); };
+document.getElementById("cmd-msg").onclick = function(){ runShortcut("maintain message"); };
+document.getElementById("cmd-cam").onclick = function(){ runShortcut("maintain Camera"); };
+
+document.getElementById("cmd-ai").onclick = function(){
+  document.getElementById("ai-wrap").classList.add("open");
+};
+document.getElementById("ai-close").onclick = function(){
+  document.getElementById("ai-wrap").classList.remove("open");
+};
+document.getElementById("ai-wrap").onclick = function(e){
+  if(e.target === document.getElementById("ai-wrap")) document.getElementById("ai-wrap").classList.remove("open");
+};
+document.getElementById("ai-send").onclick = function(){
+  var input = document.getElementById("ai-input");
+  var txt = (input.value || "").trim();
+  if(!txt) return;
+  var body = document.getElementById("ai-body");
+  body.innerHTML += '<div class="msg bot" style="margin-left:auto;background:rgba(90,214,230,.08)">'+esc(txt)+'</div>';
+  body.innerHTML += '<div class="msg bot">Proxy not connected yet. Real Gemini replies need the backend.</div>';
+  input.value = "";
+  body.scrollTop = body.scrollHeight;
+};
 
 fit();
 try{ buildStage(); project(); }
 catch(err){
   fit();
-  orbit.innerHTML='<div style="position:fixed;left:16px;right:16px;top:80px;color:#5ad6e6;font:12px ui-monospace,monospace;line-height:1.5;text-align:center">Init error \u2014 tell Claude:<br>'+String((err&&err.message)||err)+'</div>';
+  orbit.innerHTML='<div style="position:fixed;left:16px;right:16px;top:80px;color:#5ad6e6;font:12px ui-monospace,monospace;line-height:1.5;text-align:center">Init error — tell Grok:<br>'+String((err&&err.message)||err)+'</div>';
 }
 </script>
 
@@ -536,9 +641,9 @@ catch(err){
      MAINTAIN · GITHUB PUSH PANEL  (drop-in, self-contained)
      ============================================================ -->
 <style>
-  #mp-fab{position:fixed;right:16px;bottom:16px;z-index:99998;
-    width:52px;height:52px;border-radius:50%;background:#0a0e14;
-    border:1px solid #2de1e1;color:#2de1e1;font-size:22px;
+  #mp-fab{position:fixed;right:14px;bottom:calc(env(safe-area-inset-bottom) + 92px);z-index:99998;
+    width:48px;height:48px;border-radius:50%;background:#0a0e14;
+    border:1px solid #2de1e1;color:#2de1e1;font-size:20px;
     display:flex;align-items:center;justify-content:center;
     box-shadow:0 0 14px rgba(45,225,225,.35);cursor:pointer;}
   #mp-wrap{position:fixed;inset:0;z-index:99999;display:none;
