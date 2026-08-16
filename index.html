@@ -182,7 +182,7 @@
 
 function esc(s){ return String(s==null?"":s)
   .replace(/&/g,"&"+"amp;").replace(/</g,"&"+"lt;").replace(/>/g,"&"+"gt;")
-  .replace(/"/g,"&"+"quot;").replace(/'/g,"&#39;"); }
+  .replace(/\"/g,"&"+"quot;").replace(/'/g,"&#39;"); }
 function safeUrl(u){
   u=(u||"").trim(); if(!u) return "";
   if(/^\s*(javascript|data|vbscript|blob|file):/i.test(u)) return "";
@@ -399,7 +399,7 @@ function formHTML(title,cid,kind,vals){
   vals=vals||{};
   return '<div class="grip"></div>'
     +'<div class="shead"><button class="back" data-act="sheet-close" aria-label="Close">\u203a</button>'
-    +'<div class="tt"><div class="cid">'+esc(cid)+'</div><div class="nm">'+esc(title)+'</div></div></div>'
+    +'<div class="tt"><div class="cid">'+esc(cid)+'</div><div class="nm">'+esc(title)+'</div></div>'
     +'<div class="mform '+kind+'" id="mform">'
     +'<div class="seg"><button data-kind="folder" class="'+(kind==="folder"?"on":"")+'">Folder</button>'
     +'<button data-kind="item" class="'+(kind==="item"?"on":"")+'">Link / note</button></div>'
@@ -441,7 +441,7 @@ function manage(node){
   showSheet(
     '<div class="grip"></div>'
     +'<div class="shead"><button class="back" data-act="sheet-close" aria-label="Close">\u203a</button>'
-    +'<div class="tt"><div class="cid">'+(node.kind==="item"?"ITEM":"FOLDER")+'</div><div class="nm">'+esc(node.name)+'</div></div></div>'
+    +'<div class="tt"><div class="cid">'+(node.kind==="item"?"ITEM":"FOLDER")+'</div><div class="nm">'+esc(node.name)+'</div></div>'
     +(node.note?'<div class="doc" style="margin-bottom:12px">'+esc(node.note)+'</div>':'')
     +(url?'<button class="btn go full" data-act="open-managed">Open link</button>':'')
     +'<button class="btn ghost full" data-act="edit-managed">Edit</button>'
@@ -621,7 +621,7 @@ catch(err){
     var c=cfg();if(!c)return;
     var path=$("mp-path").value.trim()||"index.html";
     say("Pulling "+path+" …");
-    fetch(c.url,{method:"POST",headers:{"Content-Type":"application/json"},
+    fetch(c.url,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},
       body:JSON.stringify({secret:c.secret,path:path,mode:"read"})})
       .then(function(r){return r.json();})
       .then(function(d){
@@ -639,7 +639,7 @@ catch(err){
     if(!content){say("Nothing to push — content is empty.",true);return;}
     if(!confirm("Commit "+content.length+" chars to "+path+"?"))return;
     say("Pushing "+path+" …");
-    fetch(c.url,{method:"POST",headers:{"Content-Type":"application/json"},
+    fetch(c.url,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},
       body:JSON.stringify({secret:c.secret,path:path,mode:"write",
         content:content,message:$("mp-msg").value.trim()||"Maintain update"})})
       .then(function(r){return r.json();})
