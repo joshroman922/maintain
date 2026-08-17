@@ -67,7 +67,6 @@
     font-family:var(--mono);font-size:9px;letter-spacing:.22em;color:var(--cyan);text-shadow:0 0 8px rgba(90,214,230,.6)}
   .orb:active{transform:translate(-50%,-50%) scale(.96)}
 
-  /* Holographic neon core */
   .core{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:12;width:44px;height:44px;border-radius:50%;
     background:radial-gradient(circle at 50% 30%,#e0ffff 0%,#5ad6e6 25%,#0a3a4a 70%,#020810 100%);
     border:2px solid rgba(191,244,255,.95);
@@ -174,7 +173,6 @@
   .list{overflow-y:auto;-webkit-overflow-scrolling:touch;flex:1}
   .ver{font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--dim);opacity:.55;text-align:center;margin-top:10px}
 
-  /* ===== COMMAND BELT ===== */
   #cmd-belt{
     position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 22px);
     transform:translateX(-50%);z-index:40;
@@ -198,7 +196,6 @@
   .cmd-btn:active{transform:scale(.9);border-color:#bff4ff;box-shadow:0 0 18px rgba(90,214,230,.55)}
   .cmd-btn.ai{font-size:24px;border-color:rgba(90,214,230,.7);box-shadow:0 0 16px rgba(90,214,230,.4)}
 
-  /* Left gears Settings button */
   #gears-btn{
     position:fixed;left:16px;bottom:calc(env(safe-area-inset-bottom) + 28px);z-index:40;
     width:52px;height:52px;border-radius:50%;
@@ -212,7 +209,6 @@
   #gears-btn:active{transform:scale(.9)}
   @keyframes gearsSpin{to{transform:rotate(360deg)}}
 
-  /* AI chat panel */
   #ai-wrap{position:fixed;inset:0;z-index:60;display:none;align-items:flex-end;justify-content:center;
     background:rgba(2,5,9,.7);backdrop-filter:blur(6px)}
   #ai-wrap.open{display:flex}
@@ -249,10 +245,8 @@
 <div class="flash" id="flash"></div>
 <div class="veil" id="veil"><div class="sheet" id="sheet"></div></div>
 
-<!-- Left gears Settings -->
 <button id="gears-btn" title="Settings">⚙</button>
 
-<!-- COMMAND BELT -->
 <div id="cmd-belt">
   <button class="cmd-btn" id="cmd-phone" title="Contacts">📞</button>
   <button class="cmd-btn" id="cmd-msg" title="Messages">💬</button>
@@ -260,7 +254,6 @@
   <button class="cmd-btn ai" id="cmd-ai" title="Gemini">🤖</button>
 </div>
 
-<!-- AI floating chat -->
 <div id="ai-wrap">
   <div id="ai-panel">
     <div id="ai-head">
@@ -295,25 +288,33 @@ function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(
 function iconOr(n){ return (n&&n.icon) ? n.icon : "\u2726"; }
 function openUrl(url){ var a=document.createElement("a"); a.href=url; a.target="_blank"; a.rel="noopener"; document.body.appendChild(a); a.click(); a.remove(); }
 
-/* ---------- storage ---------- */
 var Store=(function(){
   var KEY="maintain:v1", mem=null;
-  function folder(name,icon){ return {id:uid(),kind:"folder",name:name,icon:icon,children:[]}; }
+  function folder(name,icon,kids){ return {id:uid(),kind:"folder",name:name,icon:icon,children:kids||[]}; }
+  function item(name,icon,url){ return {id:uid(),kind:"item",name:name,icon:icon,url:url||"",note:"",ts:Date.now()}; }
   function defaultTop(){ return [
-    folder("Social","\uD83D\uDCAC"), folder("Health","\uD83E\uDE7A"),
-    folder("Routine / Protocol","\uD83D\uDD01"), folder("Work","\uD83D\uDEE0\uFE0F"),
-    folder("Files","\uD83D\uDDC2\uFE0F"), folder("Study / Journal","\uD83D\uDCD3")
+    folder("Social","\uD83D\uDCAC",[
+      item("Instagram","\uD83D\uDCF7","shortcuts://run-shortcut?name="+encodeURIComponent("Maintain Insta")),
+      item("Facebook","\uD83D\uDC65","shortcuts://run-shortcut?name="+encodeURIComponent("Maintain Facebook")),
+      item("Messenger","\uD83D\uDCAC","shortcuts://run-shortcut?name="+encodeURIComponent("Maintain Messenger")),
+      item("X","\u26A1","https://x.com")
+    ]),
+    folder("Health","\uD83E\uDE7A"),
+    folder("Routine / Protocol","\uD83D\uDD01"),
+    folder("Work","\uD83D\uDEE0\uFE0F"),
+    folder("Files","\uD83D\uDDC2\uFE0F"),
+    folder("Study / Journal","\uD83D\uDCD3")
   ];}
   function defaultSystem(){ return {
-    how:"Your top categories always circle the core — nothing to open first. Tap any category to descend into its sub-categories, which then circle the core the same way, rings within rings. Tap the orb (or empty space) to back out one level. The centre neon core is always the System panel.",
-    subagents:"Planned: each node can hand off to a Gemini sub-agent (via the proxy). Not built yet — first deploy, then stand up the proxy, then wire agents per node.",
-    buttons:"Orb body — tap to back out one level.\nCentre neon core — System panel.\nDashed + node — add folder or link/note.\nLong-press a node — edit or delete.\nBottom Command Belt — Phone, Messages, Camera (Shortcuts) + Gemini.\nLeft gears — Settings.",
-    goal:"Maintain is a personal life-OS console — one home screen for every part of my life, hosted on GitHub Pages and pinned to my iPhone home screen.",
-    handoff:"PROJECT: Maintain — single-file HTML life-OS console for iPhone.\n\nAESTHETIC: JARVIS-style orbital HUD with holographic neon.\n\nCOMMAND BELT: bottom floating pill — Phone / Messages / Camera + AI.\nLEFT GEARS: Settings button.",
-    rules:"WIP = 1: one change at a time.\nNo API keys in the static site.\nSections are data-driven.\nKeep it a single self-contained HTML file.",
+    how:"Your top categories always circle the core. Tap any category to descend. The centre neon core opens the System panel.",
+    subagents:"Planned: each node can hand off to a Gemini sub-agent via proxy.",
+    buttons:"Orb body — back one level.\nCentre neon core — System panel.\nBottom Command Belt — Phone, Messages, Camera + Gemini.\nLeft gears — Settings.",
+    goal:"Maintain is a personal life-OS console pinned to the iPhone home screen.",
+    handoff:"PROJECT: Maintain — single-file HTML life-OS console.",
+    rules:"WIP = 1. No API keys in the static site. Keep it a single self-contained HTML file.",
     files:"This file (index.html) is the whole app."
   };}
-  function fresh(){ return { v:6, tree:{id:"root",kind:"folder",name:"HUB",children:defaultTop()}, system:defaultSystem() }; }
+  function fresh(){ return { v:7, tree:{id:"root",kind:"folder",name:"HUB",children:defaultTop()}, system:defaultSystem() }; }
   function migrate(old){
     var root={id:"root",kind:"folder",name:"HUB",children:[]};
     (old.sections||[]).forEach(function(s){
@@ -324,7 +325,7 @@ var Store=(function(){
       root.children.push(f);
     });
     if(!root.children.length) root.children=defaultTop();
-    return { v:6, tree:root, system:defaultSystem() };
+    return { v:7, tree:root, system:defaultSystem() };
   }
   function load(){
     if(mem) return mem;
@@ -343,7 +344,6 @@ var Store=(function(){
   return { data:load, commit:save, reset:function(){ mem=fresh(); save(); }, defaultSystem:defaultSystem };
 })();
 
-/* ---------- orb art ---------- */
 function hexPts(cx,cy,r){ var p=[]; for(var k=0;k<6;k++){ var a=(k*60-90)*Math.PI/180; p.push((cx+r*Math.cos(a)).toFixed(1)+","+(cy+r*Math.sin(a)).toFixed(1)); } return p.join(" "); }
 function orbSVG(){
   var cells="", rings=[[0,0]], R=17;
@@ -360,7 +360,6 @@ function orbSVG(){
     +'<circle cx="100" cy="100" r="90" fill="none" stroke="rgba(150,240,255,.6)" stroke-width="1.5"/></svg>';
 }
 
-/* ---------- state ---------- */
 var root=Store.data().tree;
 var path=[root];
 var open=true;
@@ -487,7 +486,6 @@ function openItem(node){ var url=safeUrl(node.url);
   showFlash(node.name); }
 function showFlash(msg){ flash.textContent=msg; flash.classList.add("on"); clearTimeout(showFlash._t); showFlash._t=setTimeout(function(){ flash.classList.remove("on"); },1900); }
 
-/* ---------- sheets ---------- */
 function showSheet(html){ sheet.innerHTML=html; veil.classList.add("on"); }
 function closeSheet(){ veil.classList.remove("on"); }
 
@@ -553,7 +551,6 @@ function delManaged(){
   Store.commit(); closeSheet(); project();
 }
 
-/* ---------- system panel ---------- */
 var SYS_SECS=[["how","How it works"],["subagents","Subagents"],["buttons","Buttons — layout & functions"],
   ["goal","Goal"],["handoff","Handoff"],["rules","Rules"],["files","Attached files"]];
 function systemSheet(edit){
@@ -583,7 +580,7 @@ function systemSheet(edit){
     +'<button class="kill" data-act="sys-edit">EDIT</button></div>'
     +'<div class="doc list">'+body+'</div>'
     +'<button class="btn ghost full" data-act="reset">Reset to defaults</button>'
-    +'<div class="ver">MAINTAIN v7.3 · Exact Shortcuts</div>'
+    +'<div class="ver">MAINTAIN v7.4 · Social seeded</div>'
   );
 }
 function sysSave(){
@@ -592,7 +589,6 @@ function sysSave(){
   Store.commit(); systemSheet(false);
 }
 
-/* ---------- events ---------- */
 document.addEventListener("click",function(e){
   var t=e.target.closest("[data-act],[data-kind]"); if(!t) return;
   if(t.hasAttribute("data-kind")){
@@ -621,16 +617,14 @@ document.addEventListener("click",function(e){
 });
 window.addEventListener("resize",function(){ fit(); renderLayers(); });
 
-/* ---------- Command Belt + Gears ---------- */
 function runShortcut(name){
   var url = "shortcuts://run-shortcut?name=" + encodeURIComponent(name);
   window.location.href = url;
 }
 
-// Exact Shortcut names as they appear in the Shortcuts app
 document.getElementById("cmd-phone").onclick = function(){ runShortcut("Maintain Phone"); };
 document.getElementById("cmd-msg").onclick = function(){ runShortcut("Maintain Messages"); };
-document.getElementById("cmd-cam").onclick = function(){ runShortcut("maintain Camera"); };
+document.getElementById("cmd-cam").onclick = function(){ runShortcut("maintain Camara"); };
 document.getElementById("gears-btn").onclick = function(){ runShortcut("Maintain Settings"); };
 
 document.getElementById("cmd-ai").onclick = function(){
@@ -661,9 +655,6 @@ catch(err){
 }
 </script>
 
-<!-- ============================================================
-     MAINTAIN · GITHUB PUSH PANEL  (drop-in, self-contained)
-     ============================================================ -->
 <style>
   #mp-fab{position:fixed;right:14px;bottom:calc(env(safe-area-inset-bottom) + 92px);z-index:99998;
     width:48px;height:48px;border-radius:50%;background:#0a0e14;
@@ -786,6 +777,5 @@ catch(err){
   };
 })();
 </script>
-<!-- ================= END GITHUB PUSH PANEL ================= -->
 </body>
 </html>
