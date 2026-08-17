@@ -583,7 +583,7 @@ function systemSheet(edit){
     +'<button class="kill" data-act="sys-edit">EDIT</button></div>'
     +'<div class="doc list">'+body+'</div>'
     +'<button class="btn ghost full" data-act="reset">Reset to defaults</button>'
-    +'<div class="ver">MAINTAIN v7.2 · Holographic</div>'
+    +'<div class="ver">MAINTAIN v7.3 · Exact Shortcuts</div>'
   );
 }
 function sysSave(){
@@ -626,15 +626,12 @@ function runShortcut(name){
   var url = "shortcuts://run-shortcut?name=" + encodeURIComponent(name);
   window.location.href = url;
 }
-document.getElementById("cmd-phone").onclick = function(){ runShortcut("Maintain phone"); };
-document.getElementById("cmd-msg").onclick = function(){ runShortcut("maintain message"); };
-document.getElementById("cmd-cam").onclick = function(){ runShortcut("maintain Camera"); };
 
-// Gears Settings — tries native Settings, falls back to Shortcuts if you make one later
-document.getElementById("gears-btn").onclick = function(){
-  // Best-effort iOS Settings open
-  window.location.href = "App-prefs:";
-};
+// Exact Shortcut names as they appear in the Shortcuts app
+document.getElementById("cmd-phone").onclick = function(){ runShortcut("Maintain Phone"); };
+document.getElementById("cmd-msg").onclick = function(){ runShortcut("Maintain Messages"); };
+document.getElementById("cmd-cam").onclick = function(){ runShortcut("maintain Camera"); };
+document.getElementById("gears-btn").onclick = function(){ runShortcut("Maintain Settings"); };
 
 document.getElementById("cmd-ai").onclick = function(){
   document.getElementById("ai-wrap").classList.add("open");
