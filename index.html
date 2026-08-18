@@ -1,1 +1,27 @@
-PLACEHOLDER
+<!DOCTYPE html>
+<html lang="en" style="background:#03070c">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Maintain">
+<meta name="theme-color" content="#03070c">
+<title>Maintain</title>
+<script>
+(function(){
+  var u='https://cdn.jsdelivr.net/gh/joshroman922/maintain@1dfbdb68229332ff3eaa387bc1e90190ec513269/index.html';
+  fetch(u,{cache:'no-store'}).then(function(r){return r.text();}).then(function(html){
+    document.open();
+    document.write(html);
+    document.close();
+  }).catch(function(e){
+    document.body.style.cssText='background:#03070c;color:#5ad6e6;font-family:-apple-system,sans-serif;padding:28px;line-height:1.5';
+    document.body.textContent='Could not reload Maintain. Force-close this app, wait 1 minute, open again.';
+  });
+})();
+</script>
+</head>
+<body style="background:#03070c;color:#5ad6e6;font-family:-apple-system,sans-serif;padding:28px">
+Loading Maintain…
+</body>
+</html>
