@@ -43,7 +43,7 @@ label{display:block;font-size:12px;color:var(--dim);margin:8px 0 4px}
   <div class="brand">Field Protocol</div>
   <div class="card">
     <h2>Sound</h2>
-    <p class="why">Safari only. Silent switch off. Volume up. Tap Unlock. Hear a beep.</p>
+    <p class="why">Safari. Silent off. Unlock first. Hum, bell, and tones stay on until Stop sounds.</p>
     <p id="st">Sound: locked</p>
     <div class="row">
       <button class="btn amber" id="unlock">Unlock + beep</button>
@@ -60,15 +60,16 @@ label{display:block;font-size:12px;color:var(--dim);margin:8px 0 4px}
   <div class="card">
     <h2>Bell</h2>
     <div class="bell" id="bell"></div>
-    <div class="row"><button class="btn" id="strike">Strike</button><button class="btn sm" id="triple">3 strikes</button></div>
+    <div class="row"><button class="btn" id="strike">Strike once</button><button class="btn sm" id="triple">3 strikes</button></div>
   </div>
   <div class="card">
     <h2>Mixer</h2>
-    <p class="why">Together or one at a time. Headphones for 20-50 Hz.</p>
+    <p class="why">Holds until you stop them. Use together or one at a time.</p>
     <div class="row">
-      <button class="btn sm tog" id="togBreath">Breath hum</button>
+      <button class="btn sm tog" id="togBreath">Hum hold</button>
+      <button class="btn sm tog" id="togBell">Bell hold</button>
       <button class="btn sm" id="allOn">All on</button>
-      <button class="btn sm" id="allOff">All off</button>
+      <button class="btn amber" id="allOff">Stop sounds</button>
     </div>
     <div class="mix"><button class="tog" id="tA">A</button><div><label>Low <span id="fA">40</span> Hz</label><input id="hzA" type="range" min="20" max="80" value="40"></div><input id="gA" type="range" min="0" max="100" value="35"></div>
     <div class="mix"><button class="tog" id="tB">B</button><div><label>Hum <span id="fB">147</span> Hz</label><input id="hzB" type="range" min="90" max="220" value="147"></div><input id="gB" type="range" min="0" max="100" value="40"></div>
@@ -76,76 +77,62 @@ label{display:block;font-size:12px;color:var(--dim);margin:8px 0 4px}
   </div>
   <div class="card">
     <h2>When / why</h2>
-    <div class="ex"><b>6-3-9</b> after power. 6 in, 3 hold, 9 out. Calms.</div>
-    <div class="ex"><b>Wim Hof 30</b> lie down. 30 fast breaths, 30s empty hold. Not in water.</div>
-    <div class="ex"><b>Breath of fire</b> 20 short breaths, then rest. Sit. Stop if dizzy.</div>
-    <div class="ex"><b>Empty hold</b> after exhale, 12 or 30s. Not in water.</div>
-    <div class="ex"><b>Full hold 12</b> hold with air in.</div>
-    <div class="ex">Holotropic long sessions are not in this app.</div>
+    <div class="ex"><b>6-3-9</b> after power. 6 in, 3 hold, 9 out.</div>
+    <div class="ex"><b>Wim Hof 30</b> lie down. Not in water.</div>
+    <div class="ex"><b>Fire 20</b> sit. Stop if dizzy.</div>
+    <div class="ex"><b>Holds</b> empty 12/30 or full 12. Not in water.</div>
   </div>
 </div>
 <script>
 const MODES={
-  hyper:{name:'Slow 4-8',help:'When: anytime · 3 min · long out',phases:[{n:'In',s:4,c:'in',a:.68,b:1.2},{n:'Out',s:8,c:'out',a:1.2,b:.68}]},
-  six39:{name:'6-3-9',help:'When: after power · 3-5 min · 6-3-9',phases:[{n:'In',s:6,c:'in',a:.68,b:1.2},{n:'Hold',s:3,c:'hold',a:1.2,b:1.2},{n:'Out',s:9,c:'out',a:1.2,b:.68}]},
-  box:{name:'Box',help:'When: wired · 2 min',phases:[{n:'In',s:4,c:'in',a:.68,b:1.16},{n:'Hold',s:4,c:'hold',a:1.16,b:1.16},{n:'Out',s:4,c:'out',a:1.16,b:.68},{n:'Hold',s:4,c:'hold',a:.68,b:.68}]},
-  coherent:{name:'Calm 5.5',help:'When: anytime · 3-5 min',phases:[{n:'In',s:5.5,c:'in',a:.68,b:1.16},{n:'Out',s:5.5,c:'out',a:1.16,b:.68}]},
-  four78:{name:'4-7-8',help:'When: night · 4 rounds',phases:[{n:'In',s:4,c:'in',a:.68,b:1.18},{n:'Hold',s:7,c:'hold',a:1.18,b:1.18},{n:'Out',s:8,c:'out',a:1.18,b:.68}]},
-  hum:{name:'Hum',help:'When: after slow · 2 min',drone:1,phases:[{n:'In',s:4,c:'in',a:.68,b:1.16},{n:'Hum',s:8,c:'out',a:1.16,b:.68}]},
-  apnea:{name:'Hold 12',help:'When: sit · empty hold',phases:[{n:'In',s:3,c:'in',a:.68,b:1.1},{n:'Out',s:3,c:'out',a:1.1,b:.72},{n:'Hold',s:12,c:'hold',a:.72,b:.72}]},
-  hold30:{name:'Hold 30',help:'When: 12 was easy',phases:[{n:'In',s:3,c:'in',a:.68,b:1.1},{n:'Out',s:3,c:'out',a:1.1,b:.7},{n:'Hold',s:30,c:'hold',a:.7,b:.7}]},
-  fullhold:{name:'Full hold 12',help:'When: sit · lungs full',phases:[{n:'In',s:4,c:'in',a:.68,b:1.2},{n:'Hold',s:12,c:'hold',a:1.2,b:1.2},{n:'Out',s:6,c:'out',a:1.2,b:.68}]},
-  kapal:{name:'Fire 20',help:'When: energy · sit',n:20,phases:[{n:'In',s:.35,c:'in',a:.72,b:1.05},{n:'Out',s:.35,c:'out',a:1.05,b:.72}],
-    after:[{n:'Out',s:4,c:'out',a:1,b:.7},{n:'Hold',s:8,c:'hold',a:.7,b:.7},{n:'In',s:3,c:'in',a:.7,b:1.1},{n:'Out',s:4,c:'out',a:1.1,b:.7}]},
-  wim:{name:'Wim 30',help:'When: lie down · not in water',n:30,rounds:3,phases:[{n:'In',s:1.5,c:'in',a:.7,b:1.22},{n:'Out',s:1.5,c:'out',a:1.22,b:.7}],
-    after:[{n:'Hold',s:30,c:'hold',a:.7,b:.7},{n:'In',s:3,c:'in',a:.7,b:1.16},{n:'Hold',s:10,c:'hold',a:1.16,b:1.16},{n:'Out',s:4,c:'out',a:1.16,b:.7}]}
+  hyper:{name:'Slow 4-8',help:'When: anytime · 3 min',phases:[{n:'In',s:4,c:'in',a:.68,b:1.2},{n:'Out',s:8,c:'out',a:1.2,b:.68}]},
+  six39:{name:'6-3-9',help:'When: after power · 6-3-9',phases:[{n:'In',s:6,c:'in',a:.68,b:1.2},{n:'Hold',s:3,c:'hold',a:1.2,b:1.2},{n:'Out',s:9,c:'out',a:1.2,b:.68}]},
+  box:{name:'Box',help:'When: wired',phases:[{n:'In',s:4,c:'in',a:.68,b:1.16},{n:'Hold',s:4,c:'hold',a:1.16,b:1.16},{n:'Out',s:4,c:'out',a:1.16,b:.68},{n:'Hold',s:4,c:'hold',a:.68,b:.68}]},
+  coherent:{name:'Calm 5.5',help:'When: anytime',phases:[{n:'In',s:5.5,c:'in',a:.68,b:1.16},{n:'Out',s:5.5,c:'out',a:1.16,b:.68}]},
+  four78:{name:'4-7-8',help:'When: night',phases:[{n:'In',s:4,c:'in',a:.68,b:1.18},{n:'Hold',s:7,c:'hold',a:1.18,b:1.18},{n:'Out',s:8,c:'out',a:1.18,b:.68}]},
+  hum:{name:'Hum pace',help:'When: after slow',phases:[{n:'In',s:4,c:'in',a:.68,b:1.16},{n:'Hum',s:8,c:'out',a:1.16,b:.68}]},
+  apnea:{name:'Hold 12',help:'Empty hold',phases:[{n:'In',s:3,c:'in',a:.68,b:1.1},{n:'Out',s:3,c:'out',a:1.1,b:.72},{n:'Hold',s:12,c:'hold',a:.72,b:.72}]},
+  hold30:{name:'Hold 30',help:'Empty hold',phases:[{n:'In',s:3,c:'in',a:.68,b:1.1},{n:'Out',s:3,c:'out',a:1.1,b:.7},{n:'Hold',s:30,c:'hold',a:.7,b:.7}]},
+  fullhold:{name:'Full hold 12',help:'Lungs full',phases:[{n:'In',s:4,c:'in',a:.68,b:1.2},{n:'Hold',s:12,c:'hold',a:1.2,b:1.2},{n:'Out',s:6,c:'out',a:1.2,b:.68}]},
+  kapal:{name:'Fire 20',help:'Sit. Stop if dizzy',n:20,phases:[{n:'In',s:.35,c:'in',a:.72,b:1.05},{n:'Out',s:.35,c:'out',a:1.05,b:.72}],after:[{n:'Out',s:4,c:'out',a:1,b:.7},{n:'Hold',s:8,c:'hold',a:.7,b:.7},{n:'In',s:3,c:'in',a:.7,b:1.1},{n:'Out',s:4,c:'out',a:1.1,b:.7}]},
+  wim:{name:'Wim 30',help:'Lie down. Not in water',n:30,rounds:3,phases:[{n:'In',s:1.5,c:'in',a:.7,b:1.22},{n:'Out',s:1.5,c:'out',a:1.22,b:.7}],after:[{n:'Hold',s:30,c:'hold',a:.7,b:.7},{n:'In',s:3,c:'in',a:.7,b:1.16},{n:'Hold',s:10,c:'hold',a:1.16,b:1.16},{n:'Out',s:4,c:'out',a:1.16,b:.7}]}
 };
 const box=document.getElementById('modes');
-Object.keys(MODES).forEach(function(k){
-  const b=document.createElement('button'); b.className='btn sm'; b.textContent=MODES[k].name;
-  b.onclick=function(){ setMode(k); }; box.appendChild(b);
-});
+Object.keys(MODES).forEach(function(k){ var b=document.createElement('button'); b.className='btn sm'; b.textContent=MODES[k].name; b.onclick=function(){ setMode(k); }; box.appendChild(b); });
 let mode=MODES.hyper,run=0,pi=0,pt=0,cyc=0,last=0,after=0,rnd=1;
-let ctx,master,breathOn=0,drone,droneG;
+let ctx,master,breathOn=0,bellOn=0,drone,droneG,bellNodes=[];
 const tracks={};
 function st(t){document.getElementById('st').textContent=t}
 function unlock(){
   var AC=window.AudioContext||window.webkitAudioContext;
   if(!ctx) ctx=new AC();
   if(!master){ master=ctx.createGain(); master.gain.value=1; master.connect(ctx.destination); }
-  function ping(){ beep(880,0.25,0.28); st('Sound: '+(ctx.state||'ready')); }
+  function ping(){ beep(880,0.22,0.26); st('Sound: '+(ctx.state||'ready')); }
   if(ctx.state==='suspended') ctx.resume().then(ping).catch(ping); else ping();
   return ctx;
 }
-function beep(hz,dur,g){
-  if(!ctx) return;
-  var o=ctx.createOscillator(), gain=ctx.createGain();
-  o.frequency.value=hz; gain.gain.value=g||0.2;
-  o.connect(gain); gain.connect(ctx.destination);
-  o.start(); o.stop(ctx.currentTime+dur);
-}
-function ramp(g,v,t){
-  var n=ctx.currentTime;
-  try{ g.gain.cancelScheduledValues(n); g.gain.setValueAtTime(Math.max(.0001,g.gain.value||.0001),n); g.gain.exponentialRampToValueAtTime(Math.max(.0001,v),n+t);}catch(e){g.gain.value=v}
-}
+function beep(hz,dur,g){ if(!ctx) return; var o=ctx.createOscillator(), gain=ctx.createGain(); o.frequency.value=hz; gain.gain.value=g||0.2; o.connect(gain); gain.connect(ctx.destination); o.start(); o.stop(ctx.currentTime+dur); }
+function ramp(g,v,t){ var n=ctx.currentTime; try{ g.gain.cancelScheduledValues(n); g.gain.setValueAtTime(Math.max(.0001,g.gain.value||.0001),n); g.gain.exponentialRampToValueAtTime(Math.max(.0001,v),n+t);}catch(e){g.gain.value=v} }
 function startT(id,hz,vol){
   unlock(); stopT(id);
   var o=ctx.createOscillator(), g=ctx.createGain();
-  o.frequency.value=hz; g.gain.value=.0001; o.connect(g); g.connect(master); o.start(); ramp(g,vol,.12);
+  o.frequency.value=hz; g.gain.value=.0001; o.connect(g); g.connect(master); o.start(); ramp(g,vol,.2);
   tracks[id]={o:o,g:g};
-  if(hz<80){ var h=ctx.createOscillator(), hg=ctx.createGain(); h.frequency.value=hz*2; hg.gain.value=.0001; h.connect(hg); hg.connect(master); h.start(); ramp(hg,vol*.5,.12); tracks[id+'h']={o:h,g:hg}; }
+  if(hz<80){ var h=ctx.createOscillator(), hg=ctx.createGain(); h.frequency.value=hz*2; hg.gain.value=.0001; h.connect(hg); hg.connect(master); h.start(); ramp(hg,vol*.5,.2); tracks[id+'h']={o:h,g:hg}; }
 }
-function stopT(id){ ['','h'].forEach(function(s){ var t=tracks[id+s]; if(!t) return; try{ramp(t.g,.0001,.08); t.o.stop(ctx.currentTime+.12)}catch(e){} delete tracks[id+s]; }); }
+function stopT(id){ ['','h'].forEach(function(s){ var t=tracks[id+s]; if(!t) return; try{ramp(t.g,.0001,.1); t.o.stop(ctx.currentTime+.14)}catch(e){} delete tracks[id+s]; }); }
 function onT(id){return !!tracks[id]}
-function droneStart(){
-  unlock(); if(droneG) droneStop();
-  drone=ctx.createOscillator(); droneG=ctx.createGain();
-  drone.frequency.value=147; droneG.gain.value=.0001; drone.connect(droneG); droneG.connect(master); drone.start(); ramp(droneG,.07,.12);
+function droneStart(){ unlock(); if(droneG) return; drone=ctx.createOscillator(); droneG=ctx.createGain(); drone.frequency.value=147; droneG.gain.value=.0001; drone.connect(droneG); droneG.connect(master); drone.start(); ramp(droneG,.08,.25); }
+function droneStop(){ if(!droneG) return; try{ramp(droneG,.0001,.1); drone.stop(ctx.currentTime+.14)}catch(e){} drone=droneG=null; }
+function bellHoldStart(){
+  unlock(); if(bellNodes.length) return;
+  [110,220,264,326].forEach(function(hz,i){ var o=ctx.createOscillator(), g=ctx.createGain(); o.frequency.value=hz; g.gain.value=.0001; o.connect(g); g.connect(master); o.start(); ramp(g,0.1/(i+1),.3); bellNodes.push({o:o,g:g}); });
+  if(!onT('C')) startMix('C');
 }
-function droneStop(){ if(!droneG) return; try{ramp(droneG,.0001,.08); drone.stop(ctx.currentTime+.12)}catch(e){} drone=droneG=null; }
+function bellHoldStop(){ bellNodes.forEach(function(n){ try{ramp(n.g,.0001,.12); n.o.stop(ctx.currentTime+.16)}catch(e){} }); bellNodes=[]; }
 function setMode(k){ mode=MODES[k]; document.getElementById('help').textContent=mode.help; reset(); }
 function setBall(s){ document.getElementById('ball').style.transform='scale('+s+')'; }
-function reset(){ run=0; pi=pt=cyc=after=0; rnd=1; last=0; if(!breathOn) droneStop(); document.getElementById('go').textContent='Start'; document.getElementById('cue').textContent=mode.name; setBall(.68); }
+function reset(){ run=0; pi=pt=cyc=after=0; rnd=1; last=0; document.getElementById('go').textContent='Start'; document.getElementById('cue').textContent=mode.name; setBall(.68); }
 function ease(t){return t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2}
 function loop(ts){
   if(!run) return;
@@ -154,8 +141,7 @@ function loop(ts){
   var p=Math.min(1,pt/ph.s); var e=ph.c==='hold'?p:ease(p);
   setBall(ph.a+(ph.b-ph.a)*e);
   document.getElementById('cue').innerHTML=ph.n+'<small>'+Math.max(0,ph.s-pt).toFixed(0)+'s'+(mode.n?(' · '+cyc+'/'+mode.n):'')+'</small>';
-  if(breathOn || (mode.drone && ph.n==='Hum')){ if(!drone) droneStart(); if(droneG) ramp(droneG, ph.c==='out'? .08 : .03, .1); }
-  else if(drone && !breathOn) droneStop();
+  if(breathOn && !drone) droneStart();
   if(pt>=ph.s){
     pt=0; pi++;
     if(!after && pi>=mode.phases.length){ pi=0; cyc++; if(mode.n && cyc>=mode.n){ after=1; pi=0; } }
@@ -163,34 +149,27 @@ function loop(ts){
   }
   requestAnimationFrame(loop);
 }
-function strike(){
-  unlock();
-  var t=ctx.currentTime;
-  [110,220,264,326].forEach(function(hz,i){
-    var o=ctx.createOscillator(), g=ctx.createGain();
-    o.frequency.value=hz; g.gain.setValueAtTime(.0001,t); g.gain.exponentialRampToValueAtTime(.22/(i+1),t+.01); g.gain.exponentialRampToValueAtTime(.0001,t+6-i);
-    o.connect(g); g.connect(master); o.start(t); o.stop(t+7);
-  });
-}
+function strike(){ unlock(); var t=ctx.currentTime; [110,220,264,326].forEach(function(hz,i){ var o=ctx.createOscillator(), g=ctx.createGain(); o.frequency.value=hz; g.gain.setValueAtTime(.0001,t); g.gain.exponentialRampToValueAtTime(.22/(i+1),t+.01); g.gain.exponentialRampToValueAtTime(.0001,t+6-i); o.connect(g); g.connect(master); o.start(t); o.stop(t+7); }); }
 function hz(id){return +document.getElementById('hz'+id).value}
 function vol(id){return (+document.getElementById('g'+id).value)/100*.18}
 function startMix(id){ startT(id,hz(id),vol(id)); document.getElementById('t'+id).classList.add('on'); }
 function stopMix(id){ stopT(id); document.getElementById('t'+id).classList.remove('on'); }
 document.getElementById('unlock').onclick=unlock;
-document.getElementById('test').onclick=function(){ unlock(); setTimeout(function(){ beep(440,.35,.25); }, 120); };
+document.getElementById('test').onclick=function(){ unlock(); setTimeout(function(){ beep(440,.35,.25); },120); };
 document.getElementById('go').onclick=function(){ unlock(); run=!run; last=0; document.getElementById('go').textContent=run?'Pause':'Start'; if(run) requestAnimationFrame(loop); };
 document.getElementById('stop').onclick=reset;
 document.getElementById('strike').onclick=strike;
 document.getElementById('bell').onclick=strike;
 document.getElementById('triple').onclick=function(){ strike(); setTimeout(strike,3500); setTimeout(strike,7000); };
 document.getElementById('togBreath').onclick=function(){ breathOn=!breathOn; this.classList.toggle('on',breathOn); if(breathOn) droneStart(); else droneStop(); };
+document.getElementById('togBell').onclick=function(){ bellOn=!bellOn; this.classList.toggle('on',bellOn); if(bellOn) bellHoldStart(); else bellHoldStop(); };
 ['A','B','C'].forEach(function(id){
   document.getElementById('t'+id).onclick=function(){ unlock(); onT(id)?stopMix(id):startMix(id); };
   document.getElementById('hz'+id).oninput=function(){ document.getElementById('f'+id).textContent=hz(id); if(onT(id)) tracks[id].o.frequency.value=hz(id); };
   document.getElementById('g'+id).oninput=function(){ if(onT(id)) ramp(tracks[id].g, vol(id), .08); };
 });
-document.getElementById('allOn').onclick=function(){ unlock(); breathOn=1; document.getElementById('togBreath').classList.add('on'); droneStart(); startMix('A'); startMix('B'); startMix('C'); };
-document.getElementById('allOff').onclick=function(){ breathOn=0; document.getElementById('togBreath').classList.remove('on'); droneStop(); stopMix('A'); stopMix('B'); stopMix('C'); };
+document.getElementById('allOn').onclick=function(){ unlock(); breathOn=1; bellOn=1; document.getElementById('togBreath').classList.add('on'); document.getElementById('togBell').classList.add('on'); droneStart(); bellHoldStart(); startMix('A'); startMix('B'); startMix('C'); };
+document.getElementById('allOff').onclick=function(){ breathOn=0; bellOn=0; document.getElementById('togBreath').classList.remove('on'); document.getElementById('togBell').classList.remove('on'); droneStop(); bellHoldStop(); stopMix('A'); stopMix('B'); stopMix('C'); };
 </script>
 </body>
 </html>
