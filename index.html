@@ -14,14 +14,25 @@
     document.open();
     document.write(html);
     document.close();
-  }).catch(function(e){
-    document.body.style.cssText='background:#03070c;color:#5ad6e6;font-family:-apple-system,sans-serif;padding:28px;line-height:1.5';
-    document.body.textContent='Could not reload Maintain. Force-close this app, wait 1 minute, open again.';
+  }).catch(function(){
+    document.getElementById('boot').style.display='block';
   });
+  setTimeout(function(){
+    if(!document.getElementById('orbit')){
+      var b=document.getElementById('boot');
+      if(b) b.style.display='block';
+    }
+  }, 4000);
 })();
 </script>
 </head>
-<body style="background:#03070c;color:#5ad6e6;font-family:-apple-system,sans-serif;padding:28px">
+<body style="background:#03070c;color:#5ad6e6;font-family:-apple-system,sans-serif;padding:28px;line-height:1.5">
 Loading Maintain…
+<div id="boot" style="display:none;margin-top:18px">
+  <p>Hub did not load. Open a page:</p>
+  <p><a href="field.html" style="color:#bff4ff">Field Protocol</a></p>
+  <p><a href="dawn.html" style="color:#bff4ff">Dawn</a></p>
+  <p style="color:#7794a6;font-size:13px">Force-close the home-screen app, wait 10 seconds, open again.</p>
+</div>
 </body>
 </html>
