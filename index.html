@@ -8,5 +8,83 @@
 <meta name="apple-mobile-web-app-title" content="Maintain">
 <meta name="theme-color" content="#03070c">
 <title>Maintain</title>
-<!-- FULL FILE TOO LARGE FOR TOOL ARG — USE IN-APP PUSH -->
-</head><body><h1>Use the ⑆ button to paste maintain-v8.html</h1></body></html>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body style="background:#03070c;color:#dcecf3">
+<div class="stage" id="stage" style="min-height:100vh">
+  <div class="crumb" id="crumb"><b>HUB</b></div>
+  <div id="orbit"></div>
+  <div class="hint" id="hint"></div>
+</div>
+
+<!-- TOP: Glass weather clock + compact routine -->
+<div id="top-block">
+  <div id="wx-clock">
+    <div id="wx-ring">
+      <div id="wx-sky" class="day"></div>
+      <div id="wx-ticks"></div>
+      <div id="wx-hand"><div id="wx-bead"></div></div>
+      <div id="wx-center">
+        <div id="wx-temp">--°</div>
+        <div id="wx-cond">Loading…</div>
+        <div id="wx-daytag">DAY</div>
+        <div id="wx-sun">— → —</div>
+        <div id="wx-time">--:--</div>
+      </div>
+    </div>
+  </div>
+  <div id="timeline">
+    <div id="rt-row">
+      <div id="rt-left">
+        <div id="rt-title">Daily Routine</div>
+        <div id="rt-sub">0 of 7 completed</div>
+      </div>
+      <div id="rt-week"></div>
+      <div id="rt-pct"><b id="rt-pct-n">0%</b><span>Day Progress</span></div>
+      <button id="tl-add">+ Add</button>
+    </div>
+    <div id="rt-bar"><i id="rt-fill"></i></div>
+    <div id="tl-track">
+      <div id="tl-line"></div>
+      <div id="tl-now"></div>
+    </div>
+  </div>
+</div>
+
+<div class="flash" id="flash"></div>
+<div class="veil" id="veil"><div class="sheet" id="sheet"></div></div>
+
+<!-- Gears — window look, opens Settings sheet -->
+<button id="gears-btn" title="Settings">
+  <div class="gear-window">
+    <span class="g1">⚙</span>
+    <span class="g2">⚙</span>
+  </div>
+</button>
+
+<!-- ORIGINAL bottom buttons — functions unchanged -->
+<div id="cmd-belt">
+  <button class="cmd-btn" id="cmd-phone" title="Contacts">📞</button>
+  <button class="cmd-btn" id="cmd-msg" title="Messages">💬</button>
+  <button class="cmd-btn" id="cmd-cam" title="Camera">📷</button>
+  <button class="cmd-btn ai" id="cmd-ai" title="Gemini">🤖</button>
+</div>
+
+<div id="ai-wrap">
+  <div id="ai-panel">
+    <div id="ai-head">
+      <h3>✦ GEMINI</h3>
+      <button id="ai-close">×</button>
+    </div>
+    <div id="ai-body">
+      <div class="msg bot">Neon liquid channel ready.<br><br>Real Gemini conversation needs a proxy (API key stays off the phone). For now this panel is the visual shell — next step is wiring the backend.</div>
+    </div>
+    <div id="ai-input-row">
+      <input id="ai-input" placeholder="Message Gemini…" autocomplete="off">
+      <button id="ai-send">Send</button>
+    </div>
+  </div>
+</div>
+<script src="app.js"></script>
+</body>
+</html>
