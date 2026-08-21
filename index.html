@@ -8,20 +8,65 @@
 <meta name="apple-mobile-web-app-title" content="Maintain">
 <meta name="theme-color" content="#03070c">
 <title>Maintain</title>
+<link rel="stylesheet" href="styles.css">
 </head>
-<body style="background:#03070c;color:#5ad6e6;font-family:-apple-system,sans-serif;text-align:center;padding:80px 20px">
-Restoring original Maintain…
-<script>
-(function(){
-  var u = "https://cdn.jsdelivr.net/gh/joshroman922/maintain@9f3cec8dbc38553eb43cc5f0e97e176793114090/index.html";
-  fetch(u).then(function(r){ return r.text(); }).then(function(html){
-    document.open();
-    document.write(html);
-    document.close();
-  }).catch(function(e){
-    document.body.innerHTML = "Restore failed. Force-close and retry.<br>" + e;
-  });
-})();
-</script>
+<body style="background:#03070c;color:#dcecf3">
+<div class="stage" id="stage" style="min-height:100vh">
+  <div class="crumb" id="crumb"><b>HUB</b></div>
+  <div id="orbit"></div>
+  <div class="hint" id="hint"></div>
+</div>
+<div class="flash" id="flash"></div>
+<div class="veil" id="veil"><div class="sheet" id="sheet"></div></div>
+<button id="gears-btn" title="Settings">⚙</button>
+<div id="cmd-belt">
+  <button class="cmd-btn" id="cmd-phone" title="Contacts">📞</button>
+  <button class="cmd-btn" id="cmd-msg" title="Messages">💬</button>
+  <button class="cmd-btn" id="cmd-cam" title="Camera">📷</button>
+  <button class="cmd-btn ai" id="cmd-ai" title="Gemini">🤖</button>
+</div>
+<div id="ai-wrap">
+  <div id="ai-panel">
+    <div id="ai-head">
+      <h3>✦ GEMINI</h3>
+      <button id="ai-close">×</button>
+    </div>
+    <div id="ai-body">
+      <div class="msg bot">Neon liquid channel ready.<br><br>Real Gemini conversation needs a proxy (API key stays off the phone). For now this panel is the visual shell — next step is wiring the backend.</div>
+    </div>
+    <div id="ai-input-row">
+      <input id="ai-input" placeholder="Message Gemini…" autocomplete="off">
+      <button id="ai-send">Send</button>
+    </div>
+  </div>
+</div>
+<style>#mp-fab{position:fixed;right:14px;bottom:calc(env(safe-area-inset-bottom)+92px);z-index:99998;width:48px;height:48px;border-radius:50%;background:#0a0e14;border:1px solid #2de1e1;color:#2de1e1;font-size:20px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 14px rgba(45,225,225,.35);cursor:pointer}#mp-wrap{position:fixed;inset:0;z-index:99999;display:none;background:rgba(2,5,9,.86);backdrop-filter:blur(3px);align-items:flex-end}#mp-wrap.open{display:flex}#mp-sheet{width:100%;max-height:90vh;overflow:auto;background:#070b11;border-top:1px solid #2de1e1;border-radius:16px 16px 0 0;padding:16px 16px 28px;font-family:-apple-system,system-ui,sans-serif;color:#cfe9e9}#mp-sheet h3{margin:2px 0 12px;color:#2de1e1;font-size:15px;letter-spacing:.5px;display:flex;justify-content:space-between}#mp-sheet label{display:block;font-size:11px;color:#7fb2b2;margin:10px 0 4px;letter-spacing:.4px;text-transform:uppercase}#mp-sheet input,#mp-sheet textarea{width:100%;box-sizing:border-box;background:#0c1219;border:1px solid #1c3540;border-radius:8px;color:#e6faff;padding:10px;font-size:14px;font-family:ui-monospace,monospace}#mp-sheet textarea{min-height:180px;resize:vertical}#mp-row{display:flex;gap:8px;margin-top:14px}#mp-row button{flex:1;padding:12px;border-radius:8px;border:1px solid #2de1e1;background:#0a0e14;color:#2de1e1;font-size:14px;font-weight:600;cursor:pointer}#mp-pull{border-color:#e0a83c;color:#e0a83c}#mp-close{background:none;border:none;color:#5a7a7a;font-size:20px;cursor:pointer}#mp-status{margin-top:12px;font-size:12px;min-height:16px;white-space:pre-wrap;font-family:ui-monospace,monospace;color:#8fd}#mp-status.err{color:#ff6b6b}#mp-cfg{border-top:1px dashed #1c3540;margin-top:16px;padding-top:12px}#mp-cfg summary{color:#7fb2b2;font-size:12px;cursor:pointer}</style>
+<div id="mp-fab" title="Push to GitHub">⑆</div>
+<div id="mp-wrap">
+  <div id="mp-sheet">
+    <h3>Push to GitHub <button id="mp-close">×</button></h3>
+    <label>File path in repo</label>
+    <input id="mp-path" placeholder="index.html" value="index.html" autocapitalize="off" autocorrect="off" spellcheck="false"/>
+    <label>Commit message</label>
+    <input id="mp-msg" placeholder="Maintain update"/>
+    <label>File content (paste the COMPLETE file)</label>
+    <textarea id="mp-content" placeholder="Paste the entire new file here…"></textarea>
+    <div id="mp-row">
+      <button id="mp-pull">Pull current</button>
+      <button id="mp-push">Push</button>
+    </div>
+    <div id="mp-status"></div>
+    <details id="mp-cfg">
+      <summary>⚙︎ Setup (stored on this phone only)</summary>
+      <label>Apps Script /exec URL</label>
+      <input id="mp-url" placeholder="https://script.google.com/macros/s/…/exec" autocapitalize="off" autocorrect="off" spellcheck="false"/>
+      <label>Shared secret</label>
+      <input id="mp-secret" type="password" placeholder="your SHARED_SECRET"/>
+      <button id="mp-save" style="margin-top:10px;width:100%;padding:10px;border-radius:8px;border:1px solid #2de1e1;background:#0a0e14;color:#2de1e1;">Save config on device</button>
+    </details>
+  </div>
+</div>
+<script src="app-a.js"></script>
+<script src="app-b.js"></script>
 </body>
 </html>
