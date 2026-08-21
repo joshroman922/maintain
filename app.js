@@ -42,7 +42,7 @@ var Store=(function(){
     buttons:"Orb body — back one level.\nCentre neon core — System panel.\nBottom Command Belt — Phone, Messages, Camera + Gemini.\nLeft gears — Settings.",
     goal:"Maintain is a personal life-OS console pinned to the iPhone home screen.",
     handoff:"PROJECT: Maintain — single-file HTML life-OS console.",
-    rules:"WIP = 1. No API keys in the static site. Keep it a single self-contained HTML file.",
+    rules:"WIP = 1. Keep it a single self-contained HTML file.",
     files:"This file (index.html) is the whole app."
   };}
   function fresh(){ return { v:7, tree:{id:"root",kind:"folder",name:"HUB",children:defaultTop()}, system:defaultSystem() }; }
