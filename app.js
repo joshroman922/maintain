@@ -111,7 +111,14 @@ var flash=document.getElementById("flash");
 var veil=document.getElementById("veil");
 var sheet=document.getElementById("sheet");
 
-function fit(){ if(stage) stage.style.height=""; }
+function fit(){
+  if(!stage) return;
+  stage.style.height="";
+  var box=stage.getBoundingClientRect();
+  var need=348;
+  var s=Math.max(0.62, Math.min(1, Math.min(box.width-12, box.height-12)/need));
+  document.documentElement.style.setProperty("--hub-scale", s.toFixed(3));
+}
 
 function buildStage(){
   var c=document.createElement("div"); c.className="core"; c.id="core";
@@ -525,11 +532,11 @@ catch(err){
     dial.innerHTML="";
     var i, a, el, rTick, rNum, rHour, rBead;
     function pxR(frac){ return (root.clientWidth/2)*frac; }
-    rTick = 0.90; rNum=0.99; rHour=0.88; rBead=0.90;
-    for(i=0;i<48;i++){
-      a=(i/48)*360;
+    rTick = 0.91; rNum=1.04; rHour=1.16; rBead=0.91;
+    for(i=0;i<24;i++){
+      a=(i/24)*360;
       el=document.createElement("div");
-      el.className="wx-tick"+(i%2===0?" major":"");
+      el.className="wx-tick"+(i%6===0?" major":"");
       el.style.transform="rotate("+a+"deg) translateY(-"+Math.round(pxR(rTick))+"px)";
       dial.appendChild(el);
     }
@@ -541,7 +548,7 @@ catch(err){
       el.style.transform="translate("+Math.round(Math.cos(ang)*pxR(rNum))+"px,"+Math.round(Math.sin(ang)*pxR(rNum))+"px)";
       dial.appendChild(el);
     });
-    for(i=0;i<24;i++){
+    for(i=3;i<24;i+=6){
       var angH=hourAngle(i);
       el=document.createElement("div");
       el.className="wx-hour";
@@ -560,7 +567,7 @@ catch(err){
     var root=document.getElementById("wx-clock");
     var bead=document.getElementById("wx-bead");
     if(!root||!bead) return;
-    var r=(root.clientWidth/2)*0.92;
+    var r=(root.clientWidth/2)*0.91;
     var ang=hourAngle(fracHour);
     bead.style.transform="translate("+Math.round(Math.cos(ang)*r)+"px,"+Math.round(Math.sin(ang)*r)+"px)";
   }
@@ -591,12 +598,11 @@ catch(err){
     }
     if(data&&data.hourly&&data.hourly.weather_code){
       var codes=data.hourly.weather_code, days=data.hourly.is_day;
-      for(var h=0;h<24;h++){
+      for(var h=3;h<24;h+=6){
         var node=document.getElementById("wx-h-"+h);
         if(!node) continue;
-        var key=skyKey(codes[h], days&&days[h]);
-        node.style.backgroundImage="url('wx/"+key+".jpg')";
-        node.querySelector(".ico").textContent=wmoIco(codes[h], days&&days[h]);
+        var ico=node.querySelector(".ico");
+        if(ico) ico.textContent=wmoIco(codes[h], days&&days[h]);
       }
     }
     placeBead(now.getHours()+now.getMinutes()/60+now.getSeconds()/3600);
@@ -604,6 +610,9 @@ catch(err){
 
   var wxData=null;
   try{ wxData=JSON.parse(localStorage.getItem(WX_CACHE)||"null"); }catch(e){ wxData=null; }
+  if(!wxData||!wxData.current){
+    wxData={current:{temperature_2m:72,weather_code:2,is_day:1},daily:{sunrise:["2026-08-21T07:02:00"],sunset:["2026-08-21T20:24:00"]},hourly:{weather_code:[0,0,0,0,0,1,2,2,2,2,2,3,3,2,2,2,2,1,0,0,0,0,0,0],is_day:[0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0]}};
+  }
 
   function tickWx(){
     paintClock(new Date(), wxData);
@@ -749,4 +758,5 @@ catch(err){
   var addBtn=document.getElementById("dl-add");
   if(addBtn) addBtn.addEventListener("click", function(e){ e.stopPropagation(); addEventSheet({}); });
   renderTimeline();
+  if(typeof fit==="function") fit();
 })();
