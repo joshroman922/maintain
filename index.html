@@ -8,24 +8,34 @@
 <meta name="apple-mobile-web-app-title" content="Maintain">
 <meta name="theme-color" content="#03070c">
 <title>Maintain</title>
-<link rel="stylesheet" href="styles.css?v=8.12">
+<link rel="stylesheet" href="styles.css?v=8.2">
 </head>
 <body>
 
 <div class="hud-top" id="hud-top">
-  <div class="wx-clock" id="wx-clock">
-    <div class="wx-dial"></div>
-    <div class="wx-glass">
-      <div class="wx-sky" id="wx-sky"></div>
-      <div class="wx-shine"></div>
-      <div class="wx-rim"></div>
-      <div class="wx-read">
-        <div class="wx-time" id="wx-time">--:--</div>
-        <div class="wx-date" id="wx-date"></div>
-        <div class="wx-temp" id="wx-temp">--<small>°</small></div>
-        <div class="wx-cond" id="wx-cond"></div>
-        <div class="wx-sun" id="wx-sun"><b>DAY</b><span></span></div>
+  <div class="hud-row">
+    <div class="wx-clock" id="wx-clock">
+      <div class="wx-dial"></div>
+      <div class="wx-glass">
+        <div class="wx-sky" id="wx-sky"></div>
+        <div class="wx-shine"></div>
+        <div class="wx-rim"></div>
+        <div class="wx-read">
+          <div class="wx-time" id="wx-time">--:--</div>
+          <div class="wx-date" id="wx-date"></div>
+          <div class="wx-temp" id="wx-temp">--<small>°</small></div>
+          <div class="wx-cond" id="wx-cond"></div>
+          <div class="wx-sun" id="wx-sun"><b>DAY</b><span></span></div>
+        </div>
       </div>
+    </div>
+    <div id="cal" aria-label="Calendar">
+      <div class="cal-head">
+        <button type="button" id="cal-prev" aria-label="Previous month">‹</button>
+        <div class="cal-title" id="cal-title">AUG 2026</div>
+        <button type="button" id="cal-next" aria-label="Next month">›</button>
+      </div>
+      <div class="cal-grid" id="cal-grid"></div>
     </div>
   </div>
 
@@ -110,6 +120,6 @@
   </div>
 </div>
 
-<script src="app.js?v=8.12"></script>
+<script src="app.js?v=8.2"></script>
 </body>
 </html>

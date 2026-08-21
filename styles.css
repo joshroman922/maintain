@@ -308,8 +308,12 @@ body{
 }
 .hud-top{
   position:relative;z-index:21;flex:none;
-  padding:calc(env(safe-area-inset-top) + 2px) 10px 4px;
-  display:flex;flex-direction:column;align-items:center;gap:5px;
+  padding:calc(env(safe-area-inset-top) + 2px) 8px 4px;
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+}
+.hud-row{
+  width:min(100%, 420px);
+  display:flex;align-items:center;justify-content:center;gap:22px;
 }
 .stage{
   flex:1 1 auto;min-height:0 !important;height:auto !important;
@@ -326,16 +330,17 @@ body{
 
 /* ——— Glass weather clock ——— */
 .wx-clock{
-  --wx: 156px;
+  --wx: 144px;
   width:var(--wx);height:var(--wx);
   position:relative;flex:none;
   overflow:visible;
+  margin: 10px 16px 8px 4px;
   filter:drop-shadow(0 8px 16px rgba(0,0,0,.5)) drop-shadow(0 0 14px rgba(90,214,230,.2));
 }
 .wx-dial{position:absolute;inset:0;pointer-events:none}
 .wx-glass{
   position:absolute;left:50%;top:50%;
-  width:84%;height:84%;
+  width:70%;height:70%;
   transform:translate(-50%,-50%);
   border-radius:50%;
   overflow:hidden;
@@ -408,19 +413,21 @@ body{
 .wx-num{
   position:absolute;left:50%;top:50%;
   width:22px;margin-left:-11px;text-align:center;
-  font-family:var(--mono);font-size:8px;letter-spacing:.06em;
-  color:rgba(180,250,255,.85);
-  text-shadow:0 0 6px rgba(90,214,230,.6);
-  pointer-events:none;
+  font-family:var(--mono);font-size:6px;letter-spacing:.02em;
+  color:rgba(190,250,255,.9);
+  text-shadow:0 0 6px rgba(90,214,230,.7);
+  pointer-events:none;line-height:1;
+  font-weight:600;
 }
 .wx-hour{
-  position:absolute;width:16px;height:16px;margin:-8px 0 0 -8px;
-  border:none;background:none;box-shadow:none;overflow:visible;
-  display:grid;place-items:center;
+  position:absolute;width:9px;height:9px;margin:-4.5px 0 0 -4.5px;
+  border-radius:50%;overflow:hidden;
+  border:1px solid rgba(170,250,255,.5);
+  box-shadow:0 0 5px rgba(90,214,230,.35);
+  background:#0a1822 center/cover no-repeat;
   pointer-events:none;
-  filter:drop-shadow(0 1px 2px rgba(0,0,0,.85));
 }
-.wx-hour .ico{display:block;font-size:11px;line-height:1}
+.wx-hour .ico{display:none}
 .wx-bead{
   position:absolute;left:50%;top:50%;width:9px;height:9px;margin:-4.5px 0 0 -4.5px;
   border-radius:50%;
@@ -430,18 +437,23 @@ body{
 }
 
 @media (max-height:720px){
-  .wx-clock{--wx:148px}
-  .wx-temp{font-size:24px}
+  .wx-clock{--wx:132px}
+  .wx-temp{font-size:22px}
+  #cal{height:132px}
 }
 @media (min-height:820px){
-  .wx-clock{--wx:168px}
-  .wx-temp{font-size:28px}
+  .wx-clock{--wx:152px}
+  .wx-temp{font-size:26px}
+  #cal{height:152px}
 }
 
 /* ——— Day timeline (reminders / protocols / routines) ——— */
 #dayline{
   width:min(100%, 420px);
   height:52px;
+  position:relative;
+  overflow:hidden;
+  z-index:3;
   display:grid;
   grid-template-columns:1fr auto;
   grid-template-rows:auto 1fr;
@@ -514,6 +526,66 @@ body{
   background:transparent;color:var(--cyan);font-size:18px;line-height:1;cursor:pointer;
 }
 .dl-add:active{background:rgba(90,214,230,.12)}
+
+/* ——— Month calendar (beside clock) ——— */
+#cal{
+  flex:0 1 196px;min-width:0;max-width:196px;height:144px;
+  position:relative;z-index:2;
+  display:flex;flex-direction:column;
+  padding:5px 6px 4px;
+  border-radius:14px;
+  background:
+    radial-gradient(ellipse at 20% 0%, rgba(90,214,230,.12), transparent 55%),
+    linear-gradient(180deg, rgba(12,28,40,.82), rgba(6,14,22,.92));
+  border:1px solid rgba(120,230,250,.28);
+  box-shadow:
+    0 8px 20px rgba(0,0,0,.4),
+    inset 0 1px 0 rgba(180,250,255,.14),
+    0 0 16px rgba(90,214,230,.1);
+  backdrop-filter:blur(14px) saturate(1.25);
+}
+.cal-head{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:2px;flex:none;
+}
+.cal-title{
+  font-family:var(--mono);font-size:8px;letter-spacing:.16em;color:var(--cyan);
+  text-transform:uppercase;
+}
+.cal-head button{
+  width:22px;height:22px;border:0;background:transparent;color:var(--cyan);
+  font-size:16px;line-height:1;cursor:pointer;border-radius:6px;
+}
+.cal-head button:active{background:rgba(90,214,230,.12)}
+.cal-grid{
+  flex:1;min-height:0;
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  grid-template-rows:14px repeat(6,1fr);
+  gap:1px;
+}
+.cal-dow{
+  font-family:var(--mono);font-size:6px;letter-spacing:.08em;
+  color:rgba(90,214,230,.7);text-align:center;align-self:center;
+}
+.cal-day{
+  position:relative;
+  display:grid;place-items:center;
+  font-family:var(--mono);font-size:8px;color:#c8e8f2;
+  border-radius:5px;cursor:pointer;border:0;background:transparent;
+  padding:0;
+}
+.cal-day.mute{color:rgba(160,200,210,.28);cursor:default}
+.cal-day.today{box-shadow:inset 0 0 0 1px rgba(90,214,230,.45)}
+.cal-day.sel{
+  background:rgba(90,214,230,.22);
+  color:#e8fbff;
+  box-shadow:0 0 8px rgba(90,214,230,.35);
+}
+.cal-day .dot{
+  position:absolute;bottom:2px;width:3px;height:3px;border-radius:50%;
+  background:#5ad6e6;box-shadow:0 0 4px #5ad6e6;
+}
 
 /* ——— Gears: glass window into spinning cogs ——— */
 #gears-btn{

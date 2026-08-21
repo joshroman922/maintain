@@ -357,7 +357,7 @@ document.addEventListener("click",function(e){
 veil.addEventListener("click",function(e){ if(e.target===veil) closeSheet(); });
 document.addEventListener("click",function(e){
   if(veil.classList.contains("on")) return;
-  if(e.target.closest(".orb,.node,.hub,.core,#cmd-belt,#ai-wrap,#gears-btn,.hud-top,#wx-clock,#dayline,#mp-fab,#mp-wrap")) return;
+  if(e.target.closest(".orb,.node,.hub,.core,#cmd-belt,#ai-wrap,#gears-btn,.hud-top,#wx-clock,#dayline,#cal,#mp-fab,#mp-wrap")) return;
   if(path.length>1){ ascend(); }
 });
 window.addEventListener("resize",function(){ fit(); renderLayers(); });
@@ -467,7 +467,7 @@ catch(err){
   var WX_URL="https://api.open-meteo.com/v1/forecast?latitude="+LAT+"&longitude="+LON
     +"&current=temperature_2m,weather_code,is_day,cloud_cover,apparent_temperature"
     +"&hourly=temperature_2m,weather_code,precipitation_probability,is_day,cloud_cover"
-    +"&daily=sunrise,sunset&timezone=America/Indiana/Indianapolis&forecast_days=1&temperature_unit=fahrenheit";
+    +"&daily=sunrise,sunset&timezone=America/Indiana/Indianapolis&forecast_days=2&temperature_unit=fahrenheit";
   var WX_CACHE="maintain:v8:wx";
   var TL_KEY="maintain:v8:timeline";
 
@@ -524,7 +524,16 @@ catch(err){
     return pad(Math.floor(mins/60))+":"+pad(mins%60);
   }
 
-  /* clock geometry: 24 at top, 6 right, 12 bottom, 18 left */
+  function hourAmpm(h){
+    var ap=h>=12?"p":"a";
+    var n=h%12; if(!n) n=12;
+    return n+ap;
+  }
+  function ymd(d){
+    return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
+  }
+
+  /* clock: 12a at top, 6a right, 12p bottom, 6p left */
   function hourAngle(h){ return (h/24)*Math.PI*2 - Math.PI/2; }
 
   function buildDial(root){
@@ -532,7 +541,7 @@ catch(err){
     dial.innerHTML="";
     var i, a, el, rTick, rNum, rHour, rBead;
     function pxR(frac){ return (root.clientWidth/2)*frac; }
-    rTick = 0.91; rNum=1.04; rHour=1.16; rBead=0.91;
+    rTick = 0.86; rNum=1.18; rHour=0.86; rBead=0.86;
     for(i=0;i<24;i++){
       a=(i/24)*360;
       el=document.createElement("div");
@@ -540,15 +549,15 @@ catch(err){
       el.style.transform="rotate("+a+"deg) translateY(-"+Math.round(pxR(rTick))+"px)";
       dial.appendChild(el);
     }
-    [["24",0],["6",6],["12",12],["18",18]].forEach(function(pair){
-      var ang=hourAngle(pair[1]);
+    for(i=0;i<24;i++){
+      var ang=hourAngle(i);
       el=document.createElement("div");
       el.className="wx-num";
-      el.textContent=pair[0];
+      el.textContent=hourAmpm(i);
       el.style.transform="translate("+Math.round(Math.cos(ang)*pxR(rNum))+"px,"+Math.round(Math.sin(ang)*pxR(rNum))+"px)";
       dial.appendChild(el);
-    });
-    for(i=3;i<24;i+=6){
+    }
+    for(i=0;i<24;i++){
       var angH=hourAngle(i);
       el=document.createElement("div");
       el.className="wx-hour";
@@ -567,7 +576,7 @@ catch(err){
     var root=document.getElementById("wx-clock");
     var bead=document.getElementById("wx-bead");
     if(!root||!bead) return;
-    var r=(root.clientWidth/2)*0.91;
+    var r=(root.clientWidth/2)*0.86;
     var ang=hourAngle(fracHour);
     bead.style.transform="translate("+Math.round(Math.cos(ang)*r)+"px,"+Math.round(Math.sin(ang)*r)+"px)";
   }
@@ -597,12 +606,17 @@ catch(err){
       sunEl.innerHTML="<b>"+(isDay?"DAY":"NIGHT")+"</b><span>"+esc(riseS)+" → "+esc(setS)+"</span>";
     }
     if(data&&data.hourly&&data.hourly.weather_code){
-      var codes=data.hourly.weather_code, days=data.hourly.is_day;
-      for(var h=3;h<24;h+=6){
+      var codes=data.hourly.weather_code, days=data.hourly.is_day, times=data.hourly.time||[];
+      var today=ymd(new Date());
+      for(var h=0;h<24;h++){
         var node=document.getElementById("wx-h-"+h);
         if(!node) continue;
-        var ico=node.querySelector(".ico");
-        if(ico) ico.textContent=wmoIco(codes[h], days&&days[h]);
+        var idx=h;
+        for(var t=0;t<times.length;t++){
+          if(String(times[t]).indexOf(today+"T"+pad(h))===0){ idx=t; break; }
+        }
+        var key=skyKey(codes[idx], days&&days[idx]);
+        node.style.backgroundImage="url('wx/"+key+".jpg')";
       }
     }
     placeBead(now.getHours()+now.getMinutes()/60+now.getSeconds()/3600);
@@ -649,6 +663,21 @@ catch(err){
 
   var tlEvents=loadEvents();
   var tlTarget=null;
+  var selectedDay=new Date();
+  selectedDay=new Date(selectedDay.getFullYear(), selectedDay.getMonth(), selectedDay.getDate());
+  var calCursor=new Date(selectedDay.getFullYear(), selectedDay.getMonth(), 1);
+
+  function isSameDay(a,b){
+    return a.getFullYear()===b.getFullYear() && a.getMonth()===b.getMonth() && a.getDate()===b.getDate();
+  }
+  function eventsFor(d){
+    var key=ymd(d);
+    return tlEvents.filter(function(ev){ return !ev.date || ev.date===key; });
+  }
+  function dayHasExtras(d){
+    var key=ymd(d);
+    return tlEvents.some(function(ev){ return ev.date===key; });
+  }
 
   function dayPct(now){
     var mins=now.getHours()*60+now.getMinutes()+now.getSeconds()/60;
@@ -664,21 +693,60 @@ catch(err){
     var track=document.getElementById("dl-track-wrap");
     if(!track) return;
     var now=new Date();
-    var pct=dayPct(now);
+    var viewingToday=isSameDay(selectedDay, now);
+    var pct=viewingToday?dayPct(now):0;
     document.getElementById("dl-fill").style.width=(pct*100).toFixed(2)+"%";
-    document.getElementById("dl-now").style.left=(pct*100).toFixed(2)+"%";
+    var nowEl=document.getElementById("dl-now");
+    nowEl.style.left=(pct*100).toFixed(2)+"%";
+    nowEl.style.display=viewingToday?"":"none";
     document.getElementById("dl-pct").innerHTML=Math.round(pct*100)+"%<small>DAY</small>";
+    var title=document.querySelector(".dl-title");
+    if(title) title.textContent=viewingToday?"Today":selectedDay.toLocaleDateString("en-US",{month:"short",day:"numeric"});
     Array.prototype.slice.call(track.querySelectorAll(".dl-ev")).forEach(function(n){ n.remove(); });
-    tlEvents.forEach(function(ev){
+    eventsFor(selectedDay).forEach(function(ev){
       var el=document.createElement("button");
       el.type="button";
-      el.className="dl-ev"+(eventPct(ev)<=pct?" past":"");
+      el.className="dl-ev"+(viewingToday&&eventPct(ev)<=pct?" past":"");
       el.style.left=(eventPct(ev)*100).toFixed(2)+"%";
       el.innerHTML=esc(ev.icon||"✦");
       el.title=(ev.time||"")+" "+(ev.name||"");
       el.addEventListener("click", function(e){ e.stopPropagation(); openEvent(ev); });
       track.appendChild(el);
     });
+  }
+
+  function renderCal(){
+    var grid=document.getElementById("cal-grid");
+    var title=document.getElementById("cal-title");
+    if(!grid||!title) return;
+    var y=calCursor.getFullYear(), m=calCursor.getMonth();
+    title.textContent=calCursor.toLocaleDateString("en-US",{month:"short",year:"numeric"}).toUpperCase();
+    var first=new Date(y,m,1);
+    var start=first.getDay();
+    var daysIn=new Date(y,m+1,0).getDate();
+    var prevIn=new Date(y,m,0).getDate();
+    var today=new Date();
+    var html="", i, dow=["S","M","T","W","T","F","S"];
+    for(i=0;i<7;i++) html+='<div class="cal-dow">'+dow[i]+'</div>';
+    var cells=42, d;
+    for(i=0;i<cells;i++){
+      var dayNum, mute=false, cellDate;
+      if(i<start){
+        dayNum=prevIn-start+i+1;
+        cellDate=new Date(y,m-1,dayNum);
+        mute=true;
+      } else if(i>=start+daysIn){
+        dayNum=i-(start+daysIn)+1;
+        cellDate=new Date(y,m+1,dayNum);
+        mute=true;
+      } else {
+        dayNum=i-start+1;
+        cellDate=new Date(y,m,dayNum);
+      }
+      var cls="cal-day"+(mute?" mute":"")+(isSameDay(cellDate,today)?" today":"")+(isSameDay(cellDate,selectedDay)?" sel":"");
+      html+='<button type="button" class="'+cls+'" data-cal="'+ymd(cellDate)+'">'+dayNum+(dayHasExtras(cellDate)?'<span class="dot"></span>':'')+'</button>';
+    }
+    grid.innerHTML=html;
   }
 
   function openEvent(ev){
@@ -720,12 +788,13 @@ catch(err){
     if(tlTarget&&tlTarget.id){
       tlTarget.time=time; tlTarget.name=name; tlTarget.icon=icon; tlTarget.url=url;
     } else {
-      tlEvents.push({id:uid(), time:time, name:name, icon:icon, url:url, kind:"routine"});
+      tlEvents.push({id:uid(), time:time, name:name, icon:icon, url:url, kind:"routine", date:ymd(selectedDay)});
     }
     tlEvents.sort(function(a,b){ return hmToMin(a.time)-hmToMin(b.time); });
     saveEvents(tlEvents);
     closeSheet();
     renderTimeline();
+    renderCal();
   }
   function delEvent(){
     if(!tlTarget) return;
@@ -733,6 +802,7 @@ catch(err){
     saveEvents(tlEvents);
     closeSheet();
     renderTimeline();
+    renderCal();
   }
 
   document.addEventListener("click", function(e){
@@ -757,6 +827,21 @@ catch(err){
   }
   var addBtn=document.getElementById("dl-add");
   if(addBtn) addBtn.addEventListener("click", function(e){ e.stopPropagation(); addEventSheet({}); });
+  var calGrid=document.getElementById("cal-grid");
+  if(calGrid){
+    calGrid.addEventListener("click", function(e){
+      var b=e.target.closest("[data-cal]"); if(!b) return;
+      e.stopPropagation();
+      var p=b.getAttribute("data-cal").split("-");
+      selectedDay=new Date(+p[0], +p[1]-1, +p[2]);
+      calCursor=new Date(selectedDay.getFullYear(), selectedDay.getMonth(), 1);
+      renderCal(); renderTimeline();
+    });
+  }
+  var cp=document.getElementById("cal-prev"), cn=document.getElementById("cal-next");
+  if(cp) cp.addEventListener("click", function(e){ e.stopPropagation(); calCursor=new Date(calCursor.getFullYear(), calCursor.getMonth()-1, 1); renderCal(); });
+  if(cn) cn.addEventListener("click", function(e){ e.stopPropagation(); calCursor=new Date(calCursor.getFullYear(), calCursor.getMonth()+1, 1); renderCal(); });
+  renderCal();
   renderTimeline();
   if(typeof fit==="function") fit();
 })();
