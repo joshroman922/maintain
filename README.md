@@ -6,17 +6,16 @@ Live: https://joshroman922.github.io/maintain/
 
 ## Pages
 
-- `index.html` — Hub (v8.0 weather clock + day timeline on the v7.6 orbital hub)
+- `index.html` — Hub (v8.3 weather clock + calendar + day timeline on the v7.6 orbital hub)
 - `field.html` — Field Protocol (breathe / bell / mixer)
 - `dawn.html` — Morning card
 
 Data stays on the phone (`localStorage` keys `maintain:v1` and `maintain:v8:*`).
 
-## Add to home screen
-
-Open the live URL in Safari → Share → Add to Home Screen.
-
 ## Change log
 
-- **v8.0** — Glass weather clock (Open-Meteo, Clarksville / New Albany), 24-hour forecast ring, real-time day timeline (7:30 AM–9:00 PM) for reminders / protocols / routines. Command belt and shortcuts unchanged.
-- **v7.6** — 3D depth pass: richer glass orb, stronger core glow, elevated nodes/hubs, perspective stage, seeded Field Protocol + Dawn under Routine.
+- **v8.3** — Polish: calendar/timeline no longer collide with +. Hour labels thinned to 12/3/6/9. Camera shortcut tries `Maintain Camera` then `maintain Camara`. Empty Health / Work / Files / Journal folders seeded. Timeline chips for the selected calendar day. Gemini panel talks with a phone-local API key (Google AI Studio).
+- **v8.2** — Calendar beside clock, hourly AM/PM + weather thumbnails.
+- **v8.1** — Clearer clock, no overlap with hub.
+- **v8.0** — Glass weather clock (Open-Meteo, Clarksville / New Albany), 24-hour forecast ring, real-time day timeline (7:30 AM–9:00 PM).
+- **v7.6** — 3D depth pass + Field Protocol + Dawn.
