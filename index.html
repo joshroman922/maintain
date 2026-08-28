@@ -13,7 +13,6 @@
 <link rel="stylesheet" href="v85.css?v=8.5.1">
 </head>
 <body>
-
 <div class="hud-top" id="hud-top">
   <div class="hud-row">
     <div class="wx-clock" id="wx-clock">
@@ -40,7 +39,6 @@
       <div class="cal-grid" id="cal-grid"></div>
     </div>
   </div>
-
   <div id="dayline">
     <div class="dl-head">
       <div class="dl-title">Today</div>
@@ -48,90 +46,39 @@
       <div class="dl-pct" id="dl-pct">—%</div>
     </div>
     <div class="dl-track-wrap" id="dl-track-wrap">
-      <div class="dl-track">
-        <div class="dl-fill" id="dl-fill"></div>
-      </div>
+      <div class="dl-track"><div class="dl-fill" id="dl-fill"></div></div>
       <div class="dl-now" id="dl-now"></div>
     </div>
     <button class="dl-add" id="dl-add" type="button" aria-label="Add reminder">+</button>
     <div class="dl-list" id="dl-list"></div>
   </div>
 </div>
-
 <div class="stage" id="stage">
   <div class="crumb" id="crumb"><b>HUB</b></div>
   <div id="orbit"></div>
   <div class="hint" id="hint"></div>
 </div>
-
 <div class="flash" id="flash"></div>
 <div class="veil" id="veil"><div class="sheet" id="sheet"></div></div>
-
 <button id="gears-btn" title="Settings" aria-label="Maintain Settings">
   <span class="gear-glass">
     <svg class="gear-a" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65a.5.5 0 0 0 .12-.64l-2-3.46a.5.5 0 0 0-.6-.22l-2.49 1a7.2 7.2 0 0 0-1.7-.98l-.38-2.65A.5.5 0 0 0 13.9 2h-4a.5.5 0 0 0-.49.42l-.38 2.65c.63.23-1.2.56-1.7.98l-2.49-1a.5.5 0 0 0-.6.22l-2 3.46a.5.5 0 0 0 .12.64L4.57 11c-.04.32-.07.65-.07 1s.03.66.07.98l-2.11 1.65a.5.5 0 0 0 .12.64l2 3.46c.14.24.43.34.68.22l2.49-1c.5.42 1.07.75 1.7.98l.38 2.65a.5.5 0 0 0 .49.42h4a.5.5 0 0 0 .49-.42l.38-2.65c.63-.23 1.2-.56 1.7-.98l2.49 1a.5.5 0 0 0 .6-.22l2-3.46a.5.5 0 0 0-.12-.64l-2.11-1.65zM12 15.5A3.5 3.5 0 1 1 12 8.5a3.5 3.5 0 0 1 0 7z"/></svg>
     <svg class="gear-b" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65a.5.5 0 0 0 .12-.64l-2-3.46a.5.5 0 0 0-.6-.22l-2.49 1a7.2 7.2 0 0 0-1.7-.98l-.38-2.65A.5.5 0 0 0 13.9 2h-4a.5.5 0 0 0-.49.42l-.38 2.65c.63.23-1.2.56-1.7.98l-2.49-1a.5.5 0 0 0-.6.22l-2 3.46a.5.5 0 0 0 .12.64L4.57 11c-.04.32-.07.65-.07 1s.03.66.07.98l-2.11 1.65a.5.5 0 0 0 .12.64l2 3.46c.14.24.43.34.68.22l2.49-1c.5.42 1.07.75 1.7.98l.38 2.65a.5.5 0 0 0 .49.42h4a.5.5 0 0 0 .49-.42l.38-2.65c.63-.23 1.2-.56 1.7-.98l2.49 1a.5.5 0 0 0 .6-.22l2-3.46a.5.5 0 0 0-.12-.64l-2.11-1.65zM12 15.5A3.5 3.5 0 1 1 12 8.5a3.5 3.5 0 0 1 0 7z"/></svg>
   </span>
 </button>
-
 <div id="cmd-belt">
   <button class="cmd-btn" id="cmd-phone" title="Contacts">📞</button>
   <button class="cmd-btn" id="cmd-msg" title="Messages">💬</button>
   <button class="cmd-btn" id="cmd-cam" title="Camera">📷</button>
   <button class="cmd-btn ai" id="cmd-ai" title="Gemini">🤖</button>
 </div>
-
-<div id="ai-wrap">
-  <div id="ai-panel">
-    <div id="ai-head">
-      <h3>✦ GEMINI</h3>
-      <button id="ai-cfg" type="button" title="API key">⚙</button>
-      <button id="ai-close">×</button>
-    </div>
-    <div id="ai-cfg-row">
-      <input id="ai-key" type="password" placeholder="Paste Gemini API key (stays on this phone)" autocomplete="off">
-      <button id="ai-key-save" type="button">Save</button>
-    </div>
-    <div id="ai-body">
-      <div class="msg bot">Maintain channel ready. Save a Gemini API key (⚙) once — it never leaves this phone.</div>
-    </div>
-    <div id="ai-input-row">
-      <input id="ai-input" placeholder="Message Gemini…" autocomplete="off">
-      <button id="ai-send">Send</button>
-    </div>
-  </div>
-</div>
-
+<div id="ai-wrap"><div id="ai-panel"><div id="ai-head"><h3>✦ GEMINI</h3><button id="ai-cfg" type="button" title="API key">⚙</button><button id="ai-close">×</button></div><div id="ai-cfg-row"><input id="ai-key" type="password" placeholder="Paste Gemini API key (stays on this phone)" autocomplete="off"><button id="ai-key-save" type="button">Save</button></div><div id="ai-body"><div class="msg bot">Maintain channel ready. Save a Gemini API key (⚙) once — it never leaves this phone.</div></div><div id="ai-input-row"><input id="ai-input" placeholder="Message Gemini…" autocomplete="off"><button id="ai-send">Send</button></div></div></div>
 <div id="mp-fab" title="Push to GitHub">⑆</div>
-<div id="mp-wrap">
-  <div id="mp-sheet">
-    <h3>Push to GitHub <button id="mp-close">×</button></h3>
-    <label>File path in repo</label>
-    <input id="mp-path" placeholder="index.html" value="index.html" autocapitalize="off" autocorrect="off" spellcheck="false"/>
-    <label>Commit message</label>
-    <input id="mp-msg" placeholder="Maintain update"/>
-    <label>File content (paste the COMPLETE file)</label>
-    <textarea id="mp-content" placeholder="Paste the entire new file here…"></textarea>
-    <div id="mp-row">
-      <button id="mp-pull">Pull current</button>
-      <button id="mp-push">Push</button>
-    </div>
-    <div id="mp-status"></div>
-    <details id="mp-cfg">
-      <summary>⚙︎ Setup (stored on this phone only)</summary>
-      <label>Apps Script /exec URL</label>
-      <input id="mp-url" placeholder="https://script.google.com/macros/s/…/exec" autocapitalize="off" autocorrect="off" spellcheck="false"/>
-      <label>Shared secret</label>
-      <input id="mp-secret" type="password" placeholder="your SHARED_SECRET"/>
-      <button id="mp-save" style="margin-top:10px;width:100%;padding:10px;border-radius:8px;border:1px solid #2de1e1;background:#0a0e14;color:#2de1e1;">Save config on device</button>
-    </details>
-  </div>
-</div>
-
+<div id="mp-wrap"><div id="mp-sheet"><h3>Push to GitHub <button id="mp-close">×</button></h3><label>File path in repo</label><input id="mp-path" placeholder="index.html" value="index.html" autocapitalize="off" autocorrect="off" spellcheck="false"/><label>Commit message</label><input id="mp-msg" placeholder="Maintain update"/><label>File content (paste the COMPLETE file)</label><textarea id="mp-content" placeholder="Paste the entire new file here…"></textarea><div id="mp-row"><button id="mp-pull">Pull current</button><button id="mp-push">Push</button></div><div id="mp-status"></div><details id="mp-cfg"><summary>⚙︎ Setup (stored on this phone only)</summary><label>Apps Script /exec URL</label><input id="mp-url" placeholder="https://script.google.com/macros/s/…/exec" autocapitalize="off" autocorrect="off" spellcheck="false"/><label>Shared secret</label><input id="mp-secret" type="password" placeholder="your SHARED_SECRET"/><button id="mp-save" style="margin-top:10px;width:100%;padding:10px;border-radius:8px;border:1px solid #2de1e1;background:#0a0e14;color:#2de1e1;">Save config on device</button></details></div></div>
 <script src="app.js?v=8.5.1"></script>
+<script src="app-ui.js?v=8.5.1"></script>
 <script src="app-tl.js?v=8.5.1"></script>
 <script src="v83.js?v=8.5.1"></script>
 <script src="v84.js?v=8.5.1"></script>
 <script src="v85.js?v=8.5.1"></script>
-</body>
-</html>
+</body></html>
