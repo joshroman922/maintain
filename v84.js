@@ -74,7 +74,7 @@
         tl.push({
           id:"hub-"+it.id,
           sourceId:it.id,
-          time:defaultTime(it.name),
+          time:it.when||defaultTime(it.name),
           name:it.name,
           icon:it.icon||"\uD83D\uDD01",
           url:it.url||"",
@@ -84,6 +84,7 @@
         hit=tl[tl.length-1];
       } else {
         if(!hit.sourceId){ hit.sourceId=it.id; changed=true; }
+        if(it.when && hit.time!==it.when){ hit.time=it.when; changed=true; }
         if(hit.name!==it.name || (it.icon && hit.icon!==it.icon) || (it.url && hit.url!==it.url)){
           hit.name=it.name;
           if(it.icon) hit.icon=it.icon;
@@ -109,16 +110,15 @@
   function applyAndRefresh(force){
     var changed=false;
     try{ changed=syncHubToTracker(); }catch(e){}
-    if((changed||force) && !sessionStorage.getItem("maintain:v84:booted")){
-      sessionStorage.setItem("maintain:v84:booted","1");
-      location.reload();
+    if(changed && window.MaintainTL && window.MaintainTL.save){
+      window.MaintainTL.save(loadTL());
       return true;
     }
-    if(changed||force){
-      location.reload();
+    if((changed||force) && window.MaintainTL && window.MaintainTL.refresh){
+      window.MaintainTL.refresh();
       return true;
     }
-    return false;
+    return changed;
   }
 
   if(typeof Store!=="undefined" && Store.commit){

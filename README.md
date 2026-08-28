@@ -6,17 +6,17 @@ Live: https://joshroman922.github.io/maintain/
 
 ## Pages
 
-- `index.html` — Hub (v8.4 weather clock + calendar + live day tracker on the v7.6 orbital hub)
-- `field.html` — Field Protocol (breathe / bell / mixer)
+- `index.html` — Hub (v8.5 workweek tracker + calendar + weather clock on the v7.6 orbital hub)
+- `field.html` — Field Protocol
 - `dawn.html` — Morning card
 
 Data stays on the phone (`localStorage` keys `maintain:v1` and `maintain:v8:*`).
 
 ## Change log
 
-- **v8.4** — Day tracker now follows Routine / Protocol hub items, reminder-named items, and calendar adds. Add inside Routine and it lands on the 7:30–9:00 track. Tap the same calendar day twice to add a dated reminder. Delete from Routine removes the sourced tracker event.
-- **v8.3** — Polish: calendar/timeline no longer collide with +. Hour labels thinned to 12/3/6/9. Camera shortcut tries `Maintain Camera` then `maintain Camara`. Empty Health / Work / Files / Journal folders seeded. Timeline chips for the selected calendar day. Gemini panel talks with a phone-local API key (Google AI Studio).
-- **v8.2** — Calendar beside clock, hourly AM/PM + weather thumbnails.
-- **v8.1** — Clearer clock, no overlap with hub.
-- **v8.0** — Glass weather clock (Open-Meteo, Clarksville / New Albany), 24-hour forecast ring, real-time day timeline (7:30 AM–9:00 PM).
-- **v7.6** — 3D depth pass + Field Protocol + Dawn.
+- **v8.5** — Weekday work block Mon–Fri 7:30a–4:00p. Wake 5:45a + Leave 7:10 / latest 7:15. Time field on Routine adds. Done / Skip today. Repeating vs one-shot. Health off the track unless marked. No reload on hub sync. iOS ping via Shortcuts (`Maintain Wake`, `Maintain Leave`, `Maintain Reminder`).
+- **v8.4** — Tracker follows Routine / reminders / calendar.
+- **v8.3** — Timeline chips, seeded folders, Gemini key.
+- **v8.2** — Calendar beside clock.
+- **v8.0** — Glass weather clock + day timeline.
+- **v7.6** — Orbital hub + Field + Dawn.

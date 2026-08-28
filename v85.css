@@ -1,0 +1,12 @@
+/* Maintain v8.5 — work block + done/skip, no 3D restyle yet */
+.dl-range{white-space:nowrap}
+.dl-block{
+  position:absolute;top:50%;height:10px;transform:translateY(-50%);
+  border-radius:99px;pointer-events:none;
+  background:linear-gradient(90deg,rgba(90,214,230,.18),rgba(90,214,230,.08));
+  border:1px solid rgba(90,214,230,.28);
+}
+.dl-ev.done{opacity:.38;filter:grayscale(.6)}
+.dl-ev.kind-alarm{box-shadow:0 0 8px rgba(255,196,72,.45)}
+.dl-ev.kind-leave{box-shadow:0 0 8px rgba(255,120,80,.4)}
+.dl-chip.done{text-decoration:line-through;opacity:.55}
